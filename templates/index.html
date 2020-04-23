@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+
+{% block header %}
+    <div class="jumbotron">
+        <div class="container">
+            <h1 class="display-4">Vaccination Curation System</h1>
+            <p class="lead">We are trying to digitze the vaccination records of people to lead to a safer and secure future.</p>
+            <hr class="my-4">
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <form>  
+        <div class="form-group">
+            <label for="inputEmail">Email address</label>
+            <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email">
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+        </div>
+        <div class="form-group">
+            <label for="inputPassword">Password</label>
+            <input type="password" class="form-control" id="password" placeholder="Password">
+        </div>
+        <button type="submit" class="btn btn-primary">LOGIN</button>
+        <p>Dont have an account? <a href="/signup">Signup</a></p>
+    </form>
+{% endblock %}

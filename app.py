@@ -1,11 +1,27 @@
-from flask import Flask
+# IMPORTS
+from flask import Flask, url_for
+from flask import request
+from flask import render_template
+from config import *
+from flask_mysqldb import MySQL
+from werkzeug.security import check_password_hash, generate_password_hash
+
+#INITIALIZATIONS
 app = Flask(__name__)
 
-@app.route('/')
-def hello_world():
-    return 'Hello, World'
+app.config['MYSQL_HOST'] = MYSQL_DATABASE_HOST
+app.config['MYSQL_USER'] = MYSQL_DATABASE_USER
+app.config['MYSQL_PASSWORD'] = MYSQL_DATABASE_PASSWORD
+app.config['MYSQL_DB'] = MYSQL_DATABASE_DB
 
-@app.route('/login')
+mysql = MySQL(app)
+
+# APP ROUTES
+@app.route('/', methods=['GET'])
+def hello_world():
+    return render_template('index.html')
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     return 'Login'
 

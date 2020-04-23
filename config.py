@@ -1,0 +1,4 @@
+MYSQL_DATABASE_USER = 'root'
+MYSQL_DATABASE_PASSWORD = 'password'
+MYSQL_DATABASE_DB = 'vaccination_table'
+MYSQL_DATABASE_HOST = 'localhost'

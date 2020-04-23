@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+
+{% block header %}
+    <div class="jumbotron">
+        <div class="container">
+            <h1 class="display-4">Vaccination Curation System</h1>
+            <p class="lead">We are trying to digitze the vaccination records of people to lead to a safer and secure future.</p>
+            <hr class="my-4">
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <form action="signup" method="post">
+        <div class="form-row">  
+            <div class="form-group col-12">
+                <label for="inputEmail">Name</label>
+                <input type="text" class="form-control" id="name" aria-describedby="username" placeholder="Enter name">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="userage">Age</label>
+                <input type="number" class="form-control" id="age" aria-describedby="user-age" placeholder="Enter age">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="select-gender">Gender</label>
+                <select class="form-control" id="gendeer">
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Other</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputEmail">Email</label>
+            <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email">
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="inputpassword">Password</label>
+                <input type="password" class="form-control" id="password" aria-describedby="password" placeholder="Enter password">
+            </div>
+            <div class="form-group col-md-6">
+                    <label for="confirmpassword">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirm-password" aria-describedby="password" placeholder="Confirm password">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary col-12">REGISTER</button>
+        <p>Already have an account? <a href="/login">Login</a></p>
+        
+    </form>
+{% endblock %}

@@ -23,11 +23,14 @@ def hello_world():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    return 'Login'
+    if (request.method  == 'POST'):
+        return 'Login Attempt'
+    else:
+        return render_template('index.html')
 
 @app.route('/signup')
 def signup():
-    return 'Signup'
+    return render_template('signup.html')
 
 @app.route('/addRecord')
 def addRecord():

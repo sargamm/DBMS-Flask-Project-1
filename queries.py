@@ -3,6 +3,20 @@ disease_queries=[]
 vaccine_queries=[]
 healthcentre_queries=[]
 country_queries=[]
+user_queries.append("insert into users values("+id+','+ full_name+','+ Gender+','+ DOB+','+ emailID+','+state+','+Address+','+Contact+','+GuardianName+','+AadharNumber+')')
+#Display citizens of Bihar vaccinated against the disease SHINGLES.
+disease_queries.append("Select U.id,U.full_name from users U, VaccinationRecords V,Disease D, DiseaseVaccineRelation R where V.UserID=U.id and V.VaccineID=R.VaccineID and R.ICDCode=D.ICD10 and  U.state='Bihar' and D.Name='SHINGLES'")
+
+"""
+    NOTE: SARGAM subqueries nest them like this below, performance is way higher and less records are accessed
+"""
+disease_queries.append("Select id, full_name from users where state='Bihar' and id = (Select UserId from VaccinationRecords where VaccineID=(Select R.VaccineID from Disease D, DiseaseVaccineRelation R where D.name = 'Shingles' and D.ICD10=R.ICDCode));")
+z
+
+user_queries.append("insert into users values("+id+','+ full_name+','+ Gender+','+ DOB+','+ emailID+','+state+','+Address+','+Contact+','+GuardianName+','+Aadhar Number+')')
+
+#Display citizens of Bihar vaccinated against the disease SHINGLES.
+disease_queries.append("Select id, full_name from users where state='Bihar' and id = (Select UserID from VaccinationRecords where VaccineID=(Select R.VaccineID from Disease D, DiseaseVaccineRelation R where D.name = 'Shingles' and D.ICD10=R.ICDCode));")
 
 #lists the unfulfilled vaccine requirements for a user according to a particular country
 user_queries.append("Select V.name from Vaccinations V where V.VaccineID in (Select VaccinationID from CountryImmunizationRecords where CountryCode='IN') and V.VaccineID in(select VaccineID from DiseaseVaccineRelation where ICDCode in (select ICD10 from Disease)) and V.VaccineID not in ( select A.VaccineID from VaccinationRecords A where A.UserID=4)")

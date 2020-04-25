@@ -9,7 +9,7 @@ user_queries.append("Select V.name, D.Name from Vaccinations V, Disease D,Diseas
 #list vaccination record for a particular user
 user_queries.append("select * from VaccinationRecords where UserID=73")
 #create new user
-user_queries.append("insert into users values("+id+','+ full_name+','+ Gender+','+ DOB+','+ emailID+','+state+','+Address+','+Contact+','+GuardianName+','+Aadhar Number+')')
+user_queries.append("insert into users values("+id+','+ full_name+','+ Gender+','+ DOB+','+ emailID+','+state+','+Address+','+Contact+','+GuardianName+','+AadharNumber+')')
 #Display citizens of Bihar vaccinated against the disease SHINGLES.
 disease_queries.append("Select U.id,U.full_name from users U, VaccinationRecords V,Disease D, DiseaseVaccineRelation R where V.UserID=U.id and V.VaccineID=R.VaccineID and R.ICDCode=D.ICD10 and  U.state='Bihar' and D.Name='SHINGLES'")
 
@@ -17,7 +17,7 @@ disease_queries.append("Select U.id,U.full_name from users U, VaccinationRecords
     NOTE: SARGAM subqueries nest them like this below, performance is way higher and less records are accessed
 """
 disease_queries.append("Select id, full_name from users where state='Bihar' and id = (Select UserId from VaccinationRecords where VaccineID=(Select R.VaccineID from Disease D, DiseaseVaccineRelation R where D.name = 'Shingles' and D.ICD10=R.ICDCode));")
-
+z
 #Print Users and their vaccination dates done in Public Health Centres-'Health Centre1','Browsebug','Zoomcast','Blogpad','Yabox'
 healthcentre_queries.append("Select U.id,U.full_name,V.VaccineDate,P.name from users U,VaccinationRecords V, PublicHealthCentre P where U.id=V.UserID and P.id=V.PublicHealthCentreID and P.name in ('Health Centre1','Browsebug','Zoomcast','Blogpad','Yabox')")
 #Check the availability of vaccine for Pneumococcal disease in health centre with name 

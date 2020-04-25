@@ -2,8 +2,9 @@
 <html>
 <head>
     <title>VacciCure-Vaccination Curation System</title>
-    <link rel="stylesheet" href="../static/style.css">
+    
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -44,11 +45,11 @@
     <p>We are trying to digitze the vaccination records of people to lead to a safer and secure future.</p>  
     </div>
     <div class="col-md-6">
-    <img src="../images/homepagevaccine.png" class="img-fluid">
+    <img src="{{url_for('static', filename='homepagevaccine.png')}}" class="img-fluid">
     </div>
     </div>
     </div>
-    <img src="../images/white-wave.png" class="bottom-img">
+    <img src="{{url_for('static', filename='white-wave.png')}}" class="bottom-img">
     </section>
     <!---------------Services Section------------>
     <section id="services">
@@ -56,15 +57,15 @@
     <h1 class="title">SERVICES</h1>
     <div class="row">
     <div class="col-md-4 services">
-    <img src="../images/vaccinerecordicon.png" class="service-img">
+    <img src="{{url_for('static', filename='vaccinerecordicon.png')}}" class="service-img">
     <h4 class="icon-heading">My Vaccination Record</h4>
     </div>
     <div class="col-md-4 services">
-    <img src="../images/vaccineicon.png" class="service-img">
+    <img src="{{url_for('static', filename='vaccineicon.png')}}" class="service-img">
     <h4 class="icon-heading">Vaccinations Due</h4>
     </div>
     <div class="col-md-4 services">
-    <img src="../images/healthfacility.png" class="service-img">
+    <img src="{{url_for('static', filename='healthfacility.png')}}" class="service-img">
     <h4 class="icon-heading">Nearby Vaccine Facility</h4>
     </div>
     </div>
@@ -86,7 +87,7 @@
     </p>
     </div>
     <div class="col-md-6 about-us">
-        <img src="../images/aboutus.png" class="aboutus-img">
+        <img src="{{url_for('static', filename='aboutus.png')}}" class="aboutus-img">
     </div>
     </div>
     </div>

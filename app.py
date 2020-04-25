@@ -36,7 +36,7 @@ mysql = MySQL(app)
 # APP ROUTES
 @app.route('/', methods=['GET'])
 def hello_world():
-    return render_template('index.html')
+    return render_template('home.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

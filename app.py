@@ -1,18 +1,35 @@
 # IMPORTS
 from flask import Flask, url_for
 from flask import request
-from flask import render_template
+from flask import render_template, redirect
+from flask import session
+from datetime import date, datetime
 from config import *
 from flask_mysqldb import MySQL
 from werkzeug.security import check_password_hash, generate_password_hash
+import mysql.connector
+
+
 
 #INITIALIZATIONS
 app = Flask(__name__)
-
+app.config['SECRET_KEY'] = SECRET_KEY
 app.config['MYSQL_HOST'] = MYSQL_DATABASE_HOST
 app.config['MYSQL_USER'] = MYSQL_DATABASE_USER
 app.config['MYSQL_PASSWORD'] = MYSQL_DATABASE_PASSWORD
 app.config['MYSQL_DB'] = MYSQL_DATABASE_DB
+app.config['MYSQL_PORT'] = 3306
+
+
+#mydb = mysql.connector.connect(
+#  host="localhost",
+#  user="binaryblood",
+#  password='vg261999',
+#)
+
+#mydb.close()
+
+#print(mydb)
 
 mysql = MySQL(app)
 
@@ -24,13 +41,69 @@ def hello_world():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if (request.method  == 'POST'):
-        return 'Login Attempt'
+        query = "SELECT userID, password from AuthUsers WHERE emailID LIKE (%s)"
+        email = request.form.get('email')
+        password = request.form.get('password')
+        if (email == None or password == None):
+            return 'error'
+        cur = mysql.connection.cursor()
+        cur.execute(str(query), [email])
+        x = cur.fetchone()
+        if (password == x[1]):
+            cur.execute("SELECT full_name from users WHERE id=(%s)", [x[0]])
+            name = cur.fetchone()
+            session['loggedIn'] = True
+            session['userId'] = x[0]
+            session['userName'] = name[0]
+        #print(result)
+        #mysql.connection.commit()
+        cur.close()
+        return render_template('index.html')
     else:
         return render_template('index.html')
 
-@app.route('/signup')
+@app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    return render_template('signup.html')
+    if (request.method  == 'POST'):
+        if (session.get("loggedIn") != None):
+            return render_template('signup.html')
+        else:
+            errors = []
+            name = request.form.get('name')
+            email = request.form.get('email')
+            dateString = request.form.get('dob')
+            dob = datetime.strptime(dateString, '%Y-%m-%d').date()
+            print(dob)
+            password = request.form.get('password')
+            c_password = request.form.get('c_password')
+            gender = request.form.get('gender')
+            pincode = request.form.get('pincode')
+            contact = request.form.get('contact')
+            if (password != c_password):
+                errors.append("Passwords don't match")
+            if (len(pincode) < 6):
+                errors.append("Pincode too short")
+            if (len(errors) == 0):
+                query = "INSERT INTO users(full_name, emailID, DOB, pincode, contact, gender) VALUES (%s, %s, %s, %s, %s, %s);"
+                cur = mysql.connection.cursor()
+                cur.execute(str(query), [name, email, dob, pincode, contact, gender])
+                userId = cur.lastrowid
+                cur.execute("INSERT INTO AuthUsers(password, emailID, roleID, name) VALUES(%s, %s, %s, %s)", [password, email, 1, name])
+                mysql.connection.commit()
+                cur.close()
+                return redirect(url_for('login'))
+            else:
+                return render_template('signup.html', errors=errors)
+            
+    else:
+        return render_template('signup.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('loggedIn', None)
+    session.pop('userId', None)
+    session.pop('userName', None)
+    return redirect('/login')
 
 @app.route('/addRecord')
 def addRecord():

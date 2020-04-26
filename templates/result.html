@@ -1,8 +1,17 @@
 <div class="table-responsive">
     <h3>Result:</h3>
     <table class="table table-bordered table-striped table-hover" style="border-color: black; border: 2px">
+        {% if header_list %}
+        <tr>
+            <th scope="col">#</th>
+            {% for heading in header_list %}
+            <th scope="col">{{heading}}</th>
+            {% endfor %}
+        </tr>
+        {% endif %}
         {% for object in object_list %}
         <tr>
+            <td scope="row">{{loop.index}}</td>
             {% for _o in object %}
             <td>{{_o}}</td>
             {% endfor %}

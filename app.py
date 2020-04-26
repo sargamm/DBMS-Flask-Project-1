@@ -116,7 +116,8 @@ def addRecord():
 
 @app.route('/generalQuery', methods=['POST'])
 def generalQuery():
-    return jsonify({'data': render_template('result.html', object_list=[["vasu", "v"], ["x", "a"]])})
+    header_list = ["col1", "col2"]
+    return jsonify({'data': render_template('result.html', object_list=[["vasu", "v"], ["x", "a"]], header_list=header_list)})
 
 @app.route('/deleteRecord')
 def deleteRecord():

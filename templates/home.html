@@ -25,6 +25,9 @@
                     <a class="nav-link" href="#history">VACCINE RECORD</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="#covid">COVID DATA</a>
+                </li>
+                <li class="nav-item">
                   <a class="nav-link" href="#about">ABOUT US</a>
                 </li>
                 {% if not session.loggedIn %}
@@ -78,7 +81,7 @@
     <section class="vaccine-record"  id="history">
       {% include 'vaccineRecord.html' %}
     </section>
-    <section class="pt-5">
+    <section class="pt-5" id="covid">
       <div class="fluid-container text-center">
         <h1 class="title">COVID DATA INDIA</h1>
         <div class="row p-5">
@@ -88,7 +91,6 @@
           <!--<div class="embed-responsive embed-responsive-16by9"></div>
             <iframe class="embed-responsive-item" style="overflow: hidden;" src="/covidTimeMap" allowfullscreen scrolling="no"></iframe> -->
       </div>
-      
     </section>
     <!------------About us--------------->
     <section id="about-us">

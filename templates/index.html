@@ -23,10 +23,13 @@
                     <a class="nav-link" href="/">HOME</a>
                     </li>
                     <li class="nav-item">
-                    <a class="nav-link" href="/">SERVICES</a>
+                    <a class="nav-link" href="/#services">SERVICES</a>
                     </li>
                     <li class="nav-item">
-                    <a class="nav-link" href="/">ABOUT US</a>
+                        <a class="nav-link" href="/#history">Vaccine History</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link" href="/#about">ABOUT US</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/login">{{ session.userName }}</a>
@@ -63,8 +66,11 @@
         <p>Dont have an account? <a href="/signup">Signup</a></p>
     </form>
     {% else %}
-        <div class="container">
-            <h2>Already logged in. Want to <a href="/logout">Logout?</a> </h2>
-        </div>
+        <!-- Doctor Role -->
+        {% if session.roleID == 1 %}
+            {% include 'general.html' %}
+        {% else %}
+
+        {% endif %}
     {% endif %}
 {% endblock %}

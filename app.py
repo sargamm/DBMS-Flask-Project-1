@@ -62,6 +62,7 @@ def login():
             session['userId'] = x[1]
             session['userName'] = x[0].upper()
             session['roleID'] = x[3]
+            print(x[3])
             cur.close()
             return render_template('index.html')
     else:

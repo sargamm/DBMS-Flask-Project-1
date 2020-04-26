@@ -125,3 +125,16 @@ def deleteRecord():
 @app.route('/viewRecords')
 def viewRecords():
     return 'view records'
+
+@app.route('/covidTimeMap')
+def covidTimeMap():
+    target = request.args.get('id')
+    if target == '1':
+        return render_template('nationalTimeLine.html')
+    elif target == '2':
+        return render_template('nationalTimeLine_recovered.html')
+    elif target == '3':
+        return render_template('nationalTimeLine_deaths.html')
+    else:
+        return render_template('nationalTimeLine.html')
+    

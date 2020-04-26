@@ -1,0 +1,10 @@
+<ul>
+    {% for object in object_list %}
+    <li>
+        {% for _o in object %}
+        <span>- {{_o}}</span>
+        {% endfor %}
+        <span>-</span>
+    </li>
+    {% endfor %}
+</ul>

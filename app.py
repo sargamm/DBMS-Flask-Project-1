@@ -2,13 +2,12 @@
 from flask import Flask, url_for
 from flask import request
 from flask import render_template, redirect
-from flask import session
+from flask import session, jsonify
 from datetime import date, datetime
 from config import *
 from flask_mysqldb import MySQL
 from werkzeug.security import check_password_hash, generate_password_hash
 import mysql.connector
-
 
 
 #INITIALIZATIONS
@@ -114,6 +113,10 @@ def logout():
 @app.route('/addRecord')
 def addRecord():
     return 'record'
+
+@app.route('/generalQuery', methods=['POST'])
+def generalQuery():
+    return jsonify({'data': render_template('result.html', object_list=[["vasu", "v"], ["x", "a"]])})
 
 @app.route('/deleteRecord')
 def deleteRecord():

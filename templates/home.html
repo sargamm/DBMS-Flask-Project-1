@@ -4,9 +4,6 @@
     <title>VacciCure-Vaccination Curation System</title>
     <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-    
-    
-
 </head>
 <body>
     <section id="nav-bar">
@@ -79,26 +76,7 @@
     </div>
     </section>
     <section class="vaccine-record"  id="history">
-      <div class="container">
-        <h1 class="title text-center">VACCINE RECORD</h1>
-        <div class="row">
-          <div class="col-12 text-center">
-            <form action="/generalQuery">
-              <div class="form-row col-12">
-                  <div class="form-group col-md-6">
-                      <label for="contact">Contact</label>
-                      <input type="text" minlength="10" required="true" class="form-control" id="contact" aria-describedby="emailHelp" placeholder="Enter your contact">
-                  </div>
-                  <div class="form-group col-md-6">
-                      <label for="AdhaarNumber">Adhaar Number</label>
-                      <input type="text" class="form-control" id="adhar" placeholder="Adhar Number">
-                  </div>
-              </div>
-              <button type="submit" class="btn btn-primary col-10">Submit</button>
-            </form>
-          </div>
-        </div>
-      </div>
+      {% include 'vaccineRecord.html' %}
     </section>
     <!------------About us--------------->
     <section id="about-us">
@@ -121,8 +99,12 @@
     </div>
     </div>
     </section>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-</body>
+    <script src="{{url_for('static', filename='ajax.js')}}" ></script>
+    <script>
+      submitAjaxRequest('vaccine_record_form')
+    </script>
+  </body>
 </html>

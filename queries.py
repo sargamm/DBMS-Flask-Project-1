@@ -4,11 +4,6 @@ vaccine_queries=[]
 healthcentre_queries=[]
 country_queries=[]
 
-#Display citizens of Bihar vaccinated against the disease SHINGLES.
-disease_queries.append("Select id, full_name from users where state='Bihar' and id = (Select UserId from VaccinationRecords where VaccineID=(Select R.VaccineID from Disease D, DiseaseVaccineRelation R where D.name = 'Shingles' and D.ICD10=R.ICDCode));")
-
-#Display citizens of Bihar vaccinated against the disease SHINGLES.
-disease_queries.append("Select id, full_name from users where state='Bihar' and id = (Select UserID from VaccinationRecords where VaccineID=(Select R.VaccineID from Disease D, DiseaseVaccineRelation R where D.name = 'Shingles' and D.ICD10=R.ICDCode));")
 
 #lists the unfulfilled vaccine requirements for a user according to a particular country
 user_queries.append("Select V.name from Vaccinations V where V.VaccineID in (Select VaccinationID from CountryImmunizationRecords where CountryCode='IN') and V.VaccineID in(select VaccineID from DiseaseVaccineRelation where ICDCode in (select ICD10 from Disease)) and V.VaccineID not in ( select A.VaccineID from VaccinationRecords A where A.UserID=4)")
@@ -16,9 +11,11 @@ user_queries.append("Select V.name from Vaccinations V where V.VaccineID in (Sel
 user_queries.append("select * from VaccinationRecords where UserID=73")
 #create new user
 user_queries.append("insert into users values("+id+','+ full_name+','+ Gender+','+ DOB+','+ emailID+','+state+','+Address+','+Contact+','+GuardianName+','+AadharNumber+')')
+#list doctors who vaccinated a particular user
+user_queries.append("select * from RegisteredPractitioners where LicenseNumber in(select DoctorLicenseNo from VaccinationRecords where UserID=2)")
 
 #Display citizens of Bihar vaccinated against the disease SHINGLES.
-disease_queries.append("Select id, full_name from users where state='Bihar' and id = (Select UserID from VaccinationRecords where VaccineID=(Select R.VaccineID from Disease D, DiseaseVaccineRelation R where D.name = 'Shingles' and D.ICD10=R.ICDCode));")
+disease_queries.append("Select id, full_name from users where state='Bihar' and id = (Select UserID from VaccinationRecords where VaccineID=(Select R.VaccineID from Disease D, DiseaseVaccineRelation R where D.name = 'SHINGLES' and D.ICD10=R.ICDCode));")
 
 
 #Print Users and their vaccination dates done in Public Health Centres-'Health Centre1','Browsebug','Zoomcast','Blogpad','Yabox'

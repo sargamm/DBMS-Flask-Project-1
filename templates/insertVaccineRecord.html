@@ -1,0 +1,54 @@
+<div class="container">
+    <h1 class="title text-center">INSERT VACCINATION RECORD</h1>
+    <div class="row">
+        <div class="col-12 text-center">
+        <form action="/generalQuery" method="post" id="insert_vaccine_record_form">
+            <div class="form-row col-12">
+                <div class="form-group col-md-6">
+                    <label for="VaccineID">Vaccine ID</label>
+                    <input type="text" required="true" class="form-control" id="VaccineID" placeholder="Enter the Vaccine ID">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="UserID">User ID</label>
+                    <input type="text" class="form-control" id="UserID" placeholder="Enter User ID">
+                </div>
+            </div>
+            <div class="form-row col-12">
+                <div class="form-group col-md-6">
+                    <label for="VaccineDate">Vaccination Date</label>
+                    <input type="date" required="true" class="form-control" id="VaccineDate" placeholder="Enter the date of vaccination">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="HealthCentreID">Health Centre ID</label>
+                    <input type="text" required="true" class="form-control" id="HealthCentreID" placeholder="Associated Health Centre ID">
+                </div>
+            </div>
+            <div class="form-row col-12">
+                <div class="form-group col-md-6">
+                    <label for="DosageNo">Dosage No</label>
+                    <input type="text" required="true" class="form-control" id="DosageNo" placeholder="Dosage Number">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="CampID">Camp ID</label>
+                    <input type="text" class="form-control" id="CampID" placeholder="Camp ID">
+                </div>
+            </div>
+            <div class="form-row col-12">
+                <div class="form-group col-md-6">
+                    <label for="DoctorLicenseNo">Doctor License Number</label>
+                    <input type="text" required="true" class="form-control" id="DoctorLicenseNo" placeholder="Doctor License Number">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="VaccineCode">Vaccine Code</label>
+                    <input type="text" required="true" class="form-control" id="VaccineCode" placeholder="Enter Unique Vaccine Code">
+                </div>
+            </div>
+            <div class=row>
+                <button type="submit" class="btn btn-primary col-10">Submit</button>
+            </div>
+        </form>
+        </div>
+        <div class="col-12" id="insert_vaccine_record_form_result">
+        </div>
+    </div>
+</div>

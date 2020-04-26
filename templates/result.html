@@ -1,10 +1,12 @@
-<ul>
-    {% for object in object_list %}
-    <li>
-        {% for _o in object %}
-        <span>- {{_o}}</span>
+<div class="table-responsive">
+    <h3>Result:</h3>
+    <table class="table table-bordered table-striped table-hover" style="border-color: black; border: 2px">
+        {% for object in object_list %}
+        <tr>
+            {% for _o in object %}
+            <td>{{_o}}</td>
+            {% endfor %}
+        </tr>
         {% endfor %}
-        <span>-</span>
-    </li>
-    {% endfor %}
-</ul>
+    </table>
+</div>

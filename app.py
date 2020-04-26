@@ -36,12 +36,12 @@ mysql = MySQL(app)
 # APP ROUTES
 @app.route('/', methods=['GET'])
 def hello_world():
-    return render_template('index.html')
+    return render_template('home.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if (request.method  == 'POST'):
-        query = "SELECT userID, password from AuthUsers WHERE emailID LIKE (%s)"
+        query = "SELECT name, userID, password, roleID from AuthUsers WHERE emailID LIKE (%s)"
         email = request.form.get('email')
         password = request.form.get('password')
         if (email == None or password == None):
@@ -49,16 +49,21 @@ def login():
         cur = mysql.connection.cursor()
         cur.execute(str(query), [email])
         x = cur.fetchone()
-        if (password == x[1]):
-            cur.execute("SELECT full_name from users WHERE id=(%s)", [x[0]])
-            name = cur.fetchone()
-            session['loggedIn'] = True
-            session['userId'] = x[0]
-            session['userName'] = name[0]
+        if (x == None):
+            cur.close()
+            return render_template('index.html', errors=["Email does not exist"])
+        if (password != x[2]):
+            cur.close()
+            return render_template('index.html', errors=["Email and Password do not match"])
         #print(result)
         #mysql.connection.commit()
-        cur.close()
-        return render_template('index.html')
+        else:
+            session['loggedIn'] = True
+            session['userId'] = x[1]
+            session['userName'] = x[0].upper()
+            session['roleID'] = x[3]
+            cur.close()
+            return render_template('index.html')
     else:
         return render_template('index.html')
 

@@ -101,7 +101,7 @@ body
 /* About-us */
 #about-us
 {
-    background-color: #E0E5E6;
+    background-color: #fff;
     padding-bottom: 50px;
     padding-top: 50px;
 }
@@ -121,4 +121,9 @@ body
     width: 250px;
     padding-left: 10px;
     margin-left: 300px;
+}
+
+.vaccine-record {
+    padding: 4em;
+    background-color: #E0E5E6;
 }

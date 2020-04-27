@@ -193,8 +193,14 @@ def addRecord():
 
 @app.route('/generalQuery', methods=['POST'])
 def generalQuery():
-    header_list = ["col1", "col2"]
-    return jsonify({'data': render_template('result.html', object_list=[["vasu", "v"], ["x", "a"]], header_list=header_list)})
+    country=request.form.get('country')
+    country.lower()
+    country.capitalize()
+    cur = mysql.connection.cursor()
+    cur. execute("Select V.name from Vaccinations V where V.VaccineID=(Select VaccinationID from CountryImmunizationRecords,DiseaseVaccineRelation where VaccinationID= VaccineID and CountryName=%s and ICDCode in (select ICD10 from Disease))",[country])
+    records = cur.fetchall()
+    header_list = ["Vaccines"]
+    return jsonify({'data': render_template('result.html', object_list=records, header_list=header_list)})
 
 @app.route('/deleteRecord')
 def deleteRecord():

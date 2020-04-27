@@ -81,6 +81,9 @@
     <section class="vaccine-record"  id="history">
       {% include 'vaccineRecord.html' %}
     </section>
+    <section class="country-record" id="country">
+      {% include 'country_record_form.html' %}
+    </section>
     <section class="pt-5" id="covid">
       <div class="fluid-container text-center">
         <h1 class="title">COVID DATA INDIA</h1>
@@ -120,6 +123,9 @@
     <script src="{{url_for('static', filename='ajax.js')}}" ></script>
     <script>
       submitAjaxRequest('vaccine_record_form')
+    </script>
+    <script>
+      submitAjaxRequest('country_record_form')
     </script>
   </body>
 </html>

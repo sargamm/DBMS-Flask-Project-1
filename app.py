@@ -204,7 +204,8 @@ def addRecord():
 
 @app.route('/generalQuery', methods=['POST'])
 def generalQuery():
-    return jsonify({'data': render_template('result.html', object_list=[["vasu", "v"], ["x", "a"]])})
+    header_list = ["col1", "col2"]
+    return jsonify({'data': render_template('result.html', object_list=[["vasu", "v"], ["x", "a"]], header_list=header_list)})
 
 @app.route('/deleteRecord')
 def deleteRecord():
@@ -213,3 +214,16 @@ def deleteRecord():
 @app.route('/viewRecords')
 def viewRecords():
     return 'view records'
+
+@app.route('/covidTimeMap')
+def covidTimeMap():
+    target = request.args.get('id')
+    if target == '1':
+        return render_template('nationalTimeLine.html')
+    elif target == '2':
+        return render_template('nationalTimeLine_recovered.html')
+    elif target == '3':
+        return render_template('nationalTimeLine_deaths.html')
+    else:
+        return render_template('nationalTimeLine.html')
+    

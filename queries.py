@@ -38,6 +38,9 @@ country_queries.append("Select V.name from Vaccinations V where V.VaccineID=(Sel
 vaccine_queries.append("select U.id, U.full_name, U.emailID, D.Name from users U, Disease D where D.ICD10 in (select ICDCode from DiseaseVaccineRelation where VaccineID in (select VaccineID from VaccinationRecords where VaccineCode='33261-975')) and U.id in(select UserID from VaccinationRecords where VaccineCode = '33261-975' )")
 #display health centres where vaccine for a particular disease are available
 vaccine_queries.append("select * from PublicHealthCentre where id in (select healthCentreID from Availability where Count > 0 and VaccineID in (select VaccineID from DiseaseVaccineRelation where ICDCode=(select ICD10 from Disease where Name like 'SHINGLES')))")
+
+#display VaccinationRecords of a list of states against a list of vaccines
+vaccine_queries.append(" select * from VaccinationRecords where PublicHealthCentreID in (select id from PublicHealthCentre where state in ('Delhi')) and VaccineID in (select VaccineID from DiseaseVaccineRelation where ICDCode in (select ICD10 from Disease where name in ('SHINGLES')))")
 """
     INDEXES ADDED - 2
     QUERIES TO ADD

@@ -212,12 +212,16 @@ def generalQuery():
 def countryWiseRequirements():
     if (request.method == "POST"):
         country=request.form.get('country')
-        country.lower()
-        country.capitalize()
+        country = country.lower()
+        #country.capitalize()
         cur = mysql.connection.cursor()
-        cur. execute("Select V.name from Vaccinations V where V.VaccineID=(Select VaccinationID from CountryImmunizationRecords,DiseaseVaccineRelation where VaccinationID= VaccineID and CountryName=%s and ICDCode in (select ICD10 from Disease))",[country])
+        #cur.execute("Select V.name from Vaccinations V where V.VaccineID=(Select VaccinationID from CountryImmunizationRecords,DiseaseVaccineRelation where VaccinationID= VaccineID and CountryName=%s and ICDCode in (select ICD10 from Disease))",[country])
+        param = "%" + str(country) + "%"
+        query = "SELECT * FROM CountryWiseRequirements as C where LOWER(C.CountryName) LIKE %s"
+        cur.execute(str(query), [param])
         records = cur.fetchall()
-        header_list = ["Vaccines"]
+        num_fields = len(cur.description)
+        header_list = [i[0] for i in cur.description]
         return jsonify({'data': render_template('result.html', object_list=records, header_list=header_list)})    
     else:
         return redirect("/")

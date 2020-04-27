@@ -1,46 +1,106 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    {% if not session.loggedIn %}
+        <div class="jumbotron">
+            <div class="container">
+                <h1 class="display-4">Vaccination Curation System</h1>
+                <p class="lead">We are trying to digitze the vaccination records of people to lead to a safer and secure future.</p>
+                <hr class="my-4">
+                <button type="button" class="btn btn-dark col-12"><a class="nav-link text-white" href="/" >GO BACK HOME</a></button>
+            </div>
+        </div>
+    {% else %}
+        <section id="nav-bar">
+            <nav class="navbar navbar-expand-lg navbar-light ">
+                <a class="navbar-brand" href="#main">VacciCure</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                    <a class="nav-link" href="/">HOME</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link" href="/">SERVICES</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link" href="/">ABOUT US</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">{{ session.userName }}</a>
+                    </li>
+                </ul>
+                </div>
+            </nav>
+        </section>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if not session.loggedIn %}
 <div class="container">
     <h1 class="title text-center">REGISTER HEALTH CENTRE</h1>
     <div class="row">
         <div class="col-12 text-center">
-        <form action="/generalQuery" method="post" id="register_health_centre_form">
-            <div class="form-row col-12">
-                <div class="form-group col-md-6">
+        <form action="/HealthCentreSignup" method="post" id="register_health_centre_form">
+            <button type="submit" class="btn btn-primary col-12">REGISTER</button>
+            <p>Already have an account? <a href="/login">Login</a></p>
+            <div class="form-row">
+                <div class="form-group col-md-4">
                     <label for="name">Public Health Centre Name</label>
-                    <input type="text" class="form-control" id="name" placeholder="Enter Health Centre Name">
+                    <input type="text" name="name" class="form-control" id="name" placeholder="Enter Health Centre Name">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="inputContact">Contact Number</label>
+                    <input type="text" name="contact" required="required" size="10" minlength="10" maxlength="10" class="form-control" id="contact" aria-describedby="emailHelp" placeholder="Enter contact">
+                    <small id="contactHelp" class="form-text text-muted">We'll never share your contact with anyone else.</small>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="inputEmail">Email</label>
+                    <input type="email" name="email" required="required" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email">
+                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="inputpassword">Password</label>
+                    <input type="password" name="password" required="required" minlength="6" class="form-control" id="password" aria-describedby="password" placeholder="Enter password">
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="ContactNo">Contact Number</label>
-                    <input type="text" class="form-control" id="ContactNo" placeholder="Enter Contact">
+                    <label for="confirmpassword">Confirm Password</label>
+                    <input type="password" name="c_password" required="required" class="form-control" id="confirm-password" aria-describedby="password" placeholder="Confirm password">
                 </div>
             </div>
             <div class="form-row col-12">
                 <div class="form-group col-md-6">
                     <label for="pincode">PinCode</label>
-                    <input type="text" required="true" class="form-control" id="pincode" placeholder="Enter pincode">
+                    <input type="text" name="pincode" required="true" class="form-control" id="pincode" placeholder="Enter pincode">
                 </div>
                 <div class="form-group col-md-6">
                     <label for="address">Address</label>
-                    <input type="text" required="true" class="form-control" id="address" placeholder="Enter Address">
+                    <input type="text" name="address" required="true" class="form-control" id="address" placeholder="Enter Address">
                 </div>
             </div>
             <div class="form-row col-12">
                 <div class="form-group col-md-6">
                     <label for="NoOfHealthCamps">Number of Health Camps</label>
-                    <input type="text" required="true" class="form-control" id="NoOfHealthCamps" placeholder="Number of Vaccine Camps">
+                    <input type="text" name="NoOfHealthCamps" required="true" class="form-control" id="NoOfHealthCamps" placeholder="Number of Vaccine Camps">
                 </div>
                 <div class="form-group col-md-6">
                     <label for="OperationalSince">Operational Since</label>
-                    <input type="date" class="form-control" id="OperationalSince" placeholder="Operational Since">
+                    <input type="date" name="OperationalSince" class="form-control" id="OperationalSince" placeholder="Operational Since">
                 </div>
             </div>
             <div class="form-row col-12">
                 <div class="form-group col-md-6">
                     <label for="State">State</label>
-                    <input type="text" required="true" class="form-control" id="state" placeholder="Enter state">
+                    <input type="text" name="state" required="true" class="form-control" id="state" placeholder="Enter state">
                 </div>
                 <div class="form-group col-md-6">
                     <label for="City">City</label>
-                    <input type="text" required="true" class="form-control" id="City" placeholder="Enter City">
+                    <input type="text" name="City" required="true" class="form-control" id="City" placeholder="Enter City">
                 </div>
             </div>
             <button type="submit" class="btn btn-primary col-10">Submit</button>

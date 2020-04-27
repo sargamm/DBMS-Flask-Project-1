@@ -45,8 +45,6 @@
     <div class="row">
         <div class="col-12 text-center">
         <form action="/HealthCentreSignup" method="post" id="register_health_centre_form">
-            <button type="submit" class="btn btn-primary col-12">REGISTER</button>
-            <p>Already have an account? <a href="/login">Login</a></p>
             <div class="form-row">
                 <div class="form-group col-md-4">
                     <label for="name">Public Health Centre Name</label>
@@ -106,7 +104,12 @@
             <button type="submit" class="btn btn-primary col-10">Submit</button>
         </form>
         </div>
-        <div class="col-12" id="register_health_centre_form_result">
         </div>
-    </div>
-</div>
+        </div>
+        {% else %}
+        <div class="container">
+            <h2>Already logged in. Logout to create a new account. Go to <a href="/login">Home</a></h2>
+        </div>
+    {% endif %}
+    <div class="col-12" id="register_health_centre_form_result"></div>
+{% endblock %}

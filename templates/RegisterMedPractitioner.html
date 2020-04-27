@@ -41,7 +41,7 @@
 {% block content %}
     {% if not session.loggedIn %}
 <div class="container">
-    <h1 class="title text-center">REGISTER MEDICAL PRACTIONER</h1>
+    <h1 class="title text-center">REGISTER MEDICAL PRACTITIONER</h1>
     <div class="row">
         <div class="col-12 text-center">
         <form action="/MedicalPractitionerSignup" method="post" id="register_med_practitioner_form">
@@ -51,44 +51,6 @@
                 <div class="form-group col-md-6">
                     <label for="name">Enter Name</label>
                     <input type="text" name="name" class="form-control" id="name" placeholder="Enter Your Name">
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="DOB">Date of Birth</label>
-                    <input type="date" name="dob" class="form-control" id="DOB" placeholder="DOB">
-                </div>
-            </div>
-            <div class="form-row col-12">
-                <div class="form-group col-md-6">
-                    <label for="select-gender">Gender</label>
-                    <select class="form-control" name="gender" id="gendeer">
-                        <option>Male</option>
-                        <option>Female</option>
-                        <option>Other</option>
-                    </select>
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="userage">Pincode</label>
-                    <input type="text" name="pincode" required="required" size="6" maxlength="6" minlength="6" class="form-control" id="pincode" aria-describedby="user-age" placeholder="Enter Pincode">
-                </div>
-            </div>
-            <div class="form-row col-12">
-                <div class="form-group col-md-6">
-                    <label for="State">State</label>
-                    <input type="text" name="state" required="true" class="form-control" id="state" placeholder="Enter state">
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="address">Address</label>
-                    <input type="text" name="address" required="true" class="form-control" id="address" placeholder="Enter Address">
-                </div>
-            </div>
-            <div class="form-row col-12">
-                <div class="form-group col-md-6">
-                    <label for="Guardianname">Enter Guardian's Name</label>
-                    <input type="text" name="g_name" class="form-control" id="name" placeholder="Enter Guardian's Name">
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="AdhaarNumber">Adhaar Number</label>
-                    <input type="text" name="AdhaarNo" class="form-control" id="adhar" placeholder="Adhar Number">
                 </div>
             </div>
             <div class="form-row col-12">
@@ -130,7 +92,13 @@
             <button type="submit" class="btn btn-primary col-10">Submit</button>
         </form>
         </div>
-        <div class="col-12" id="register_med_practitioner_form_result">
         </div>
-    </div>
-</div>
+        </div>
+        {% else %}
+        <div class="container">
+            <h2>Already logged in. Logout to create a new account. Go to <a href="/login">Home</a></h2>
+        </div>
+    {% endif %}
+    <div class="col-12" id="register_med_practitioner_form_result">
+{% endblock %}
+div class="col-12" id="register_med_practitioner_form_result">

@@ -102,9 +102,9 @@ def HealthCentreRegister():
                 cur = mysql.connection.cursor()
                 cur.execute("INSERT INTO AuthUsers(password, emailID, contact, roleID, name) VALUES (%s, %s, %s, %s, %s)", [password, email, contact, 1, name])
                 AuthuserId = cur.lastrowid
-                cur.execute("INSERT INTO PublicHealthCentre(name,pincode,address,NumberOfHealthCamps,OperationalSince,city,state,Contact) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",[name,pincode,address,NoOfHealthCamps,OperationalSince,city,State,contact])
+                cur.execute("INSERT INTO PublicHealthCentre(id,name,pincode,address,NumberOfHealthCamps,OperationalSince,city,state,Contact) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",[51,name,pincode,address,NoOfHealthCamps,OperationalSince,city,State,contact])
                 healthCentreID=cur.lastrowid
-                cur.execute("INSERT INTO AuthUserHealthCentreRelation(AuthUserID,HealthCentreID) VALUES (%s,%s)",[AuthuserId,healthCentreID])
+                #cur.execute("INSERT INTO AuthUserHealthCentreRelation(AuthUserID,HealthCentreID) VALUES (%s,%s)",[AuthuserId,healthCentreID])
                 mysql.connection.commit()
                 cur.close()
                 return redirect(url_for('login'))
@@ -112,7 +112,7 @@ def HealthCentreRegister():
                 return render_template('RegisterHealthCentre.html', errors=errors)
             
     else:
-        render_template('RegisterHealthCentre.html')
+        return render_template('RegisterHealthCentre.html')
 
 @app.route('/MedicalPractitionerSignup', methods=['GET', 'POST'])
 def MedPractitionerRegister():
@@ -122,41 +122,30 @@ def MedPractitionerRegister():
         else:
             errors = []
             name = request.form.get('name')
-            dateString = request.form.get('dob')
-            dob = datetime.strptime(dateString, '%Y-%m-%d').date()
-            gender = request.form.get('gender')
             contact = request.form.get('contact')
             email = request.form.get('email')
             password = request.form.get('password')
             c_password = request.form.get('c_password')
-            pincode = request.form.get('pincode')
-            address=request.form.get('address')
-            GuardianName=request.form.get('g_name')
-            AdhaarNumber=request.form.get('AdhaarNo')
             PracticingSince=request.form.get('PracticingSince')
             licenseNo=request.form.get('license')
             HealthCentreID=request.form.get('healthCentreID')
-            State=request.form.get('state')
             if (password != c_password):
                 errors.append("Passwords don't match")
-            if (len(pincode) < 6):
-                errors.append("Pincode too short")
             if (len(errors) == 0):
                 cur = mysql.connection.cursor()
                 cur.execute("INSERT INTO AuthUsers(password, emailID, contact, roleID, name) VALUES (%s, %s, %s, %s, %s)", [password, email, contact, 2, name])
                 AuthuserId = cur.lastrowid
-                cur.execute("INSERT INTO users(full_name,Gender,DOB,emailID, pincode, state, Address, Contact, GuardianName, AadharNumber) Values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", [name,gender,dob,email,pincode,State,address,contact,GuardianName,AdhaarNumber])
+                cur.execute("INSERT INTO RegisteredPractitioners(userID, LicenseNumber,name,practicingSince, healthCentreID) Values (%s,%s,%s,%s,%s)", [AuthuserId,licenseNo,name,PracticingSince,HealthCentreID])
                 userID=cur.lastrowid
-                cur.execute("INSERT INTO RegisteredPractitioners(LicenseNumber,name,practicingSince, healthCentreID, userID) Values (%s,%s,%s,%s,%s)", [licenseNo,name,PracticingSince,HealthCentreID,userID])
-                # cur.execute("INSERT INTO AuthUserHealthCentreRelation(AuthUserID,HealthCentreID) VALUES (%s,%s)",[AuthuserId,healthCentreID])
+                #cur.execute("INSERT INTO AuthUserHealthCentreRelation(AuthUserId,HealthCentreID) VALUES (%s,%s)",[AuthuserId,userID])
                 mysql.connection.commit()
                 cur.close()
                 return redirect(url_for('login'))
             else:
-                return render_template('RegisterHealthCentre.html', errors=errors)
+                return render_template('RegisterMedPractitioner.html', errors=errors)
             
     else:
-        render_template('RegisterHealthCentre.html')
+        return render_template('RegisterMedPractitioner.html')
 
 @app.route('/GovtOfficialSignup', methods=['GET', 'POST'])
 def GovtOfficialRegister():

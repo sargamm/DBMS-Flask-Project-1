@@ -112,7 +112,7 @@ def HealthCentreRegister():
                 return render_template('RegisterHealthCentre.html', errors=errors)
             
     else:
-        render_template('RegisterHealthCentre.html')
+        return render_template('RegisterHealthCentre.html')
 
 @app.route('/MedicalPractitionerSignup', methods=['GET', 'POST'])
 def MedPractitionerRegister():
@@ -153,10 +153,10 @@ def MedPractitionerRegister():
                 cur.close()
                 return redirect(url_for('login'))
             else:
-                return render_template('RegisterHealthCentre.html', errors=errors)
+                return render_template('RegisterMedPractitioner.html', errors=errors)
             
     else:
-        render_template('RegisterHealthCentre.html')
+        return render_template('RegisterMedPractitioner.html')
 
 @app.route('/GovtOfficialSignup', methods=['GET', 'POST'])
 def GovtOfficialRegister():
@@ -204,8 +204,20 @@ def addRecord():
 
 @app.route('/generalQuery', methods=['POST'])
 def generalQuery():
-    header_list = ["col1", "col2"]
-    return jsonify({'data': render_template('result.html', object_list=[["vasu", "v"], ["x", "a"]], header_list=header_list)})
+    try:
+        contact = request.form.get('contact')
+        aadhar = request.form.get('aadhar')
+        query = 'SELECT V.VaccineDate, S.name, V.DosageNo FROM VaccinationRecords as V LEFT JOIN Vaccinations as S ON V.VaccineID=S.VaccineID where V.UserID=(Select id from users where Contact="%s" and AadharNumber="%s")'  
+        cur = mysql.connection.cursor()
+        cur.execute(str(query), [contact, aadhar])
+        result = cur.fetchall()
+        num_fields = len(cur.description)
+        header_list = [i[0] for i in cur.description]
+        if (len(result) == 0):
+            return jsonify({'data': render_template('result.html', errors="No record for the provided input")}) 
+        return jsonify({'data': render_template('result.html', object_list=result, header_list=header_list)})
+    except Exception as e:
+        return jsonify({'data': render_template('result.html', errors="Error fetching values for input provided!")})
 
 @app.route('/deleteRecord')
 def deleteRecord():
@@ -227,3 +239,28 @@ def covidTimeMap():
     else:
         return render_template('nationalTimeLine.html')
     
+
+
+'''
+    FOR THE IN QUERY!
+    format_strings = ','.join(['%s'] * len(list_of_ids))
+    cursor.execute("DELETE FROM foo.bar WHERE baz IN (%s)" % format_strings,
+                tuple(list_of_ids))
+
+                CREATE DEFINER = CURRENT_USER TRIGGER `vaccination_table`.`Availability_BEFORE_INSERT` BEFORE INSERT ON `Availability` FOR EACH ROW
+BEGIN
+	declare msg varchar(128);
+	if exists (SELECT * from Availability
+    where healthCentreID=new.healthCentreID and VaccineID=new.VaccineID) 
+    then
+		set msg = concat('VacciCureError: Trying to insert into existing entry');
+		signal sqlstate '45000' set message_text = msg;
+	else
+		if (new.Count < 0) then
+        set msg = concat('VacciCureError: Negative entry not allowed');
+		signal sqlstate '45000' set message_text = msg;
+        end if;
+    end if;
+END
+
+'''

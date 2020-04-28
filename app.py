@@ -1,5 +1,5 @@
 # IMPORTS
-from flask import Flask, url_for
+from flask import Flask, url_for, flash
 from flask import request
 from flask import render_template, redirect
 from flask import session, jsonify
@@ -18,7 +18,6 @@ app.config['MYSQL_USER'] = MYSQL_DATABASE_USER
 app.config['MYSQL_PASSWORD'] = MYSQL_DATABASE_PASSWORD
 app.config['MYSQL_DB'] = MYSQL_DATABASE_DB
 app.config['MYSQL_PORT'] = 3306
-
 
 #mydb = mysql.connector.connect(
 #  host="localhost",
@@ -61,10 +60,40 @@ def login():
             session['userId'] = x[1]
             session['userName'] = x[0].upper()
             session['roleID'] = x[3]
-            print(x[3])
+            if (str(x[3]) == '1'):
+                try:
+                    cur.execute('SELECT HealthID from HealthCentreAuthMap where AuthID=%s', [x[1]])
+                    healthID = cur.fetchone()
+                    session['specificID'] = healthID[0]
+                finally:
+                    print(session['specificID'])
+            elif (str(x[3]) == '2'):
+                try:
+                    cur.execute('SELECT DoctorID from DoctorAuthMap where AuthID=%s', [x[1]])
+                    doctorID = cur.fetchone()
+                    session['specificID'] = doctorID[0]
+                    #cur.close()
+                finally:
+                    #cur.close()
+                    print("Didn't find ID!")
+            #print(x[3])
             cur.close()
             return render_template('home.html')
     else:
+        cur = mysql.connection.cursor()
+        if (session.get("specificID") != None):
+            if (str(session.get('roleID')) == '1'):
+                formData = []
+                cur.execute('SELECT * from PublicHealthCentre where id=%s', [session.get("specificID")])
+                formData = cur.fetchone()
+                print(formData)
+                return render_template('index.html', formData=formData) 
+            elif (str(session.get('roleID')) == '2'):
+                formData = []
+                cur.execute('SELECT * from RegisteredPractitioners where LicenseNumber=%s', [session.get("specificID")])
+                formData = cur.fetchone()
+                print(formData)
+                return render_template('index.html', formData=formData)
         return render_template('index.html')
 
 @app.route('/signup',methods=['GET','POST'])
@@ -83,6 +112,7 @@ def HealthCentreRegister():
             return render_template('RegisterHealthCentre.html')
         else:
             errors = []
+            print(request.form)
             name = request.form.get('name')
             contact = request.form.get('contact')
             email = request.form.get('email')
@@ -100,19 +130,60 @@ def HealthCentreRegister():
                 errors.append("Pincode too short")
             if (len(errors) == 0):
                 cur = mysql.connection.cursor()
-                cur.execute("INSERT INTO AuthUsers(password, emailID, contact, roleID, name) VALUES (%s, %s, %s, %s, %s)", [password, email, contact, 1, name])
-                AuthuserId = cur.lastrowid
-                cur.execute("INSERT INTO PublicHealthCentre(id,name,pincode,address,NumberOfHealthCamps,OperationalSince,city,state,Contact) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",[51,name,pincode,address,NoOfHealthCamps,OperationalSince,city,State,contact])
-                healthCentreID=cur.lastrowid
-                #cur.execute("INSERT INTO AuthUserHealthCentreRelation(AuthUserID,HealthCentreID) VALUES (%s,%s)",[AuthuserId,healthCentreID])
-                mysql.connection.commit()
-                cur.close()
-                return redirect(url_for('login'))
+                try:
+                    cur.execute("INSERT INTO AuthUsers(password, emailID, contact, roleID, name) VALUES (%s, %s, %s, %s, %s)", [password, email, contact, 1, name])
+                    AuthuserId = cur.lastrowid
+                    cur.execute("INSERT INTO PublicHealthCentre(id,name,pincode,address,NumberOfHealthCamps,OperationalSince,city,state,Contact) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",[AuthuserId,name,pincode,address,NoOfHealthCamps,OperationalSince,city,State,contact])
+                    healthCentreID=cur.lastrowid
+                    cur.execute("INSERT INTO HealthCentreAuthMap(AuthID,HealthID) VALUES (%s,%s)",[AuthuserId,healthCentreID])
+                    mysql.connection.commit()
+                    cur.close()
+                    return redirect(url_for('login'))
+                except Exception as e:
+                    mysql.connection.rollback()
+                    cur.close()
+                    return redirect('/login')
             else:
-                return render_template('RegisterHealthCentre.html', errors=errors)
+                return redirect('/login')
             
     else:
         return render_template('RegisterHealthCentre.html')
+
+@app.route('/HealthCentreUpdate', methods=["POST"])
+def healthCentreUpdate():
+    if (session.get("loggedIn") == None):
+        return redirect('/login')
+    else:
+        print("HERE!")
+        errors = []
+        name = request.form.get('name')
+        contact = request.form.get('contact')
+        pincode = request.form.get('pincode')
+        address=request.form.get('address')
+        NoOfHealthCamps=request.form.get('NoOfHealthCamps')
+        OperationalSince=request.form.get('OperationalSince')
+        State=request.form.get('state')
+        city=request.form.get('City')
+        print(name)
+        if (len(pincode) < 6):
+            errors.append("Pincode too short")
+        if (len(errors) == 0):
+            cur = mysql.connection.cursor()
+            try:
+                cur.execute("UPDATE PublicHealthCentre SET name=%s,pincode=%s,address=%s,NumberOfHealthCamps=%s,OperationalSince=%s,city=%s,state=%s,Contact=%s where id=%s",[name,pincode,address,NoOfHealthCamps,OperationalSince,city,State,contact, session.get("specificID")])
+                print("SUCCESS")
+                mysql.connection.commit()
+                cur.close()
+                return redirect(url_for('login'))
+            except Exception as e:
+                mysql.connection.rollback()
+                cur.close()
+                flash("VacciCure: Error occured")
+                return redirect(url_for('login'))
+        else:
+            flash("VacciCure: Error occured")
+            return redirect(url_for('login'))
+
 
 @app.route('/MedicalPractitionerSignup', methods=['GET', 'POST'])
 def MedPractitionerRegister():
@@ -133,14 +204,17 @@ def MedPractitionerRegister():
                 errors.append("Passwords don't match")
             if (len(errors) == 0):
                 cur = mysql.connection.cursor()
-                cur.execute("INSERT INTO AuthUsers(password, emailID, contact, roleID, name) VALUES (%s, %s, %s, %s, %s)", [password, email, contact, 2, name])
-                AuthuserId = cur.lastrowid
-                cur.execute("INSERT INTO RegisteredPractitioners(userID, LicenseNumber,name,practicingSince, healthCentreID) Values (%s,%s,%s,%s,%s)", [AuthuserId,licenseNo,name,PracticingSince,HealthCentreID])
-                userID=cur.lastrowid
-                #cur.execute("INSERT INTO AuthUserHealthCentreRelation(AuthUserId,HealthCentreID) VALUES (%s,%s)",[AuthuserId,userID])
-                mysql.connection.commit()
-                cur.close()
-                return redirect(url_for('login'))
+                try:
+                    cur.execute("INSERT INTO AuthUsers(password, emailID, contact, roleID, name) VALUES (%s, %s, %s, %s, %s)", [password, email, contact, 2, name])
+                    AuthuserId = cur.lastrowid
+                    cur.execute("INSERT INTO RegisteredPractitioners(userID, LicenseNumber,name,practicingSince, healthCentreID) Values (%s,%s,%s,%s,%s)", [AuthuserId,licenseNo,name,PracticingSince,HealthCentreID])
+                    userID=cur.lastrowid
+                    cur.execute("INSERT INTO HealthCentreAuthMap(AuthID,DoctorID) VALUES (%s,%s)",[AuthuserId,userID])        
+                    mysql.connection.commit()
+                    cur.close()
+                    return redirect(url_for('login'))
+                except Exception as e:
+                    return render_template('RegisterMedPractitioner.html', errors=["VacciCure Error: Check your input again!"])
             else:
                 return render_template('RegisterMedPractitioner.html', errors=errors)
             
@@ -185,30 +259,36 @@ def logout():
     session.pop('loggedIn', None)
     session.pop('userId', None)
     session.pop('userName', None)
+    session.pop('specificID', None)
+    session.pop('roleID', None)
     return redirect('/login')
 
 @app.route('/addRecord', methods=['POST','GET'])
 def addRecord():
     if( request.method == 'POST'):
-        vaccineID = request.form.get('VaccineID')
-        aadhar=request.form.get('Aadhar')
-        dateString = request.form.get('vaccineDate')
-        vaccineDate = datetime.strptime(dateString, '%Y-%m-%d').date()
-        dosage= request.form.get('dosage')
-        CampId= request.form.get('campId')
-        vaccineCode=request.form.get('v_code')
-        licenseNo=request.form.get('license')
-        HealthCentreID=request.form.get('HealthCentreID') 
-        cur = mysql.connection.cursor()
-        cur.execute("select id from users where AadharNumber like %s",[aadhar])
-        x=cur.fetchone()
-        userID=x[0]
-        cur.execute("INSERT INTO VaccinationRecords(VaccineID,UserID,VaccineDate,PublicHealthCentreID,DosageNo,CampID,DoctorLicenseNo,VaccineCode) Values (%s,%s,%s,%s,%s,%s,%s,%s)",[vaccineID,userID,vaccineDate,HealthCentreID,dosage,CampId,licenseNo,vaccineCode])
-        mysql.connection.commit()
-        cur.close()
+        try:
+            vaccineID = request.form.get('VaccineID')
+            aadhar=request.form.get('Aadhar')
+            dateString = request.form.get('vaccineDate')
+            vaccineDate = datetime.strptime(dateString, '%Y-%m-%d').date()
+            dosage= request.form.get('dosage')
+            CampId= request.form.get('campId')
+            vaccineCode=request.form.get('v_code')
+            licenseNo=request.form.get('license')
+            HealthCentreID=request.form.get('HealthCentreID') 
+            cur = mysql.connection.cursor()
+            cur.execute("select id from users where AadharNumber like %s",[aadhar])
+            x=cur.fetchone()
+            userID=x[0]
+            cur.execute("INSERT INTO VaccinationRecords(VaccineID,UserID,VaccineDate,PublicHealthCentreID,DosageNo,CampID,DoctorLicenseNo,VaccineCode) Values (%s,%s,%s,%s,%s,%s,%s,%s)",[vaccineID,userID,vaccineDate,HealthCentreID,dosage,CampId,licenseNo,vaccineCode])
+            mysql.connection.commit()
+        except Exception as e:
+            mysql.connection.rollback()
+        finally:
+            cur.close()
         return render_template('insertVaccineRecord.html')
     else:
-        return render_template('insertVaccineRecord.html')
+        return render_template('insertVaccineRecord.html', errors="POST REQUEST ONLY! SWIPER NO SWIPING!")
 
 @app.route('/generalQuery', methods=['POST'])
 def generalQuery():
@@ -244,7 +324,7 @@ def countryWiseRequirements():
         header_list = [i[0] for i in cur.description]
         return jsonify({'data': render_template('result.html', object_list=records, header_list=header_list)})    
     else:
-        return redirect("/")
+        return redirect(url_for('hello_world'))
 
 @app.route('/Availability', methods=['GET','POST'])
 def checkAvailability():
@@ -345,7 +425,19 @@ def HealthCentreRecords():
 
 @app.route('/deleteRecord')
 def deleteRecord():
-    return 'delete record'
+    if (session.get("loggedIn") != None):
+        cur = mysql.connection.cursor()
+        print(session.get("userId")) 
+        query = "DELETE FROM AuthUsers WHERE userID=%s"
+        cur.execute(str(query), [session.get("userId")])
+        mysql.connection.commit()
+        cur.close()
+        session.pop('loggedIn', None)
+        session.pop('userId', None)
+        session.pop('userName', None)
+        session.pop('specificID', None)
+        session.pop('roleID', None)
+    return redirect("/login")
 
 @app.route('/viewRecords')
 def viewRecords():
@@ -386,5 +478,14 @@ BEGIN
         end if;
     end if;
 END
+
+SELECT P.state, P.name, S.PublicHealthCentreID, S.Cnt FROM PublicHealthCentre as P, (  
+SELECT PublicHealthCentreID, COUNT(*) as Cnt, VaccineID 
+FROM VaccinationRecords
+WHERE VaccineID=90644
+GROUP BY PublicHealthCentreID) AS S
+where P.id=S.PublicHealthCentreID 
+order BY S.CNT desc;
+
 
 '''

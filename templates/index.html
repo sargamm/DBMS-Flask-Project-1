@@ -45,6 +45,18 @@
 {% endblock %}
 
 {% block content %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-danger" role="alert">
+            Error: {{ error }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
     {% if not session.loggedIn %}
     {% for error in errors %}
     <div class="alert alert-danger" role="alert">
@@ -71,9 +83,10 @@
     {% else %}
         <!-- Doctor Role -->
         {% if session.roleID == 1 %}
-            {% include 'general.html' %}
+            {% include 'healthCentre.html' %}
         {% else %}
-
+            
         {% endif %}
+        <button type="button" class="btn btn-danger col-12" onclick="window.location.href = '/deleteAccount'">DELETE ACCOUNT</button>
     {% endif %}
 {% endblock %}

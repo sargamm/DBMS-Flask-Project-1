@@ -241,6 +241,7 @@ def countryWiseRequirements():
         return jsonify({'data': render_template('result.html', object_list=records, header_list=header_list)})    
     else:
         return redirect("/")
+
 @app.route('/Availability', methods=['GET','POST'])
 def checkAvailability():
     if (request.method == 'POST'):
@@ -262,15 +263,30 @@ def UpdateAvailability():
         stock=request.form.get('Stock')
         cur=mysql.connection.cursor()
         cur.execute("select Count from Availability where VaccineID=%s and HealthCentreID=%s", [vaccineID,heathCentreID])
-        records=cur.fetchall()
-        if records == ():
+        records=cur.fetchone()
+        if records == None:
             cur.execute("insert into Availability(Count,VaccineID,HealthCentreID) values (%s,%s,%s)",[stock,vaccineID,heathCentreID])
         else:
-            stock=int(stock)+int(records[0][0])
+            stock=int(stock)+int(records[0])
+            print(stock)
             cur.execute("Update Availability set Count=%s where VaccineID=%s and HealthCentreID=%s",[stock,vaccineID,heathCentreID])
+        mysql.connection.commit()
+        cur.close()
         return redirect("/")
     else:
         return render_template('addStock.html')
+        
+@app.route('/AvailabilityforUser', methods=['GET','POST'])
+def checkAvailabilityForUser():
+    if (request.method == 'POST'):
+        vaccineID=request.form.get('vaccineID')
+        cur=mysql.connection.cursor()
+        cur.execute("select * from PublicHealthCentre where id in(select healthCentreID from Availability where Count>0 and VaccineID=%s)", [vaccineID])
+        records=cur.fetchall()
+        header_list=[i[0] for i in cur.description]
+        return jsonify({'data': render_template('result.html', object_list=records, header_list=header_list)})    
+    else:
+        return render_template('userAvailability.html')
 
 @app.route('/deleteRecord')
 def deleteRecord():

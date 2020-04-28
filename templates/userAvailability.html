@@ -1,0 +1,18 @@
+<div class="container">
+    <h1 class="title text-center">FIND VACCINE FACILITIES</h1>
+    <div class="row">
+        <div class="col-12 text-center">
+        <form action="/AvailabilityforUser" method="post" id="check_availability_for_user_form">
+            <div class="form-row col-12">
+                <div class="form-group col-md-12">
+                    <label for="vaccineID">Vaccine ID </label>
+                    <input type="text" name="vaccineID" required="true" class="form-control" id="contact" aria-describedby="emailHelp" placeholder="Enter Vaccine ID">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary col-10">Submit</button>
+        </form>
+        </div>
+        <div class="col-12 p-3" id="check_availability_for_user_form_result">
+        </div>
+    </div>
+</div>

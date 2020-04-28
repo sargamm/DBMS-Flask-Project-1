@@ -63,7 +63,7 @@ def login():
             session['roleID'] = x[3]
             print(x[3])
             cur.close()
-            return render_template('index.html')
+            return render_template('home.html')
     else:
         return render_template('index.html')
 
@@ -187,9 +187,24 @@ def logout():
     session.pop('userName', None)
     return redirect('/login')
 
-@app.route('/addRecord')
+@app.route('/addRecord', methods=['POST','GET'])
 def addRecord():
-    return 'record'
+    if( request.method == 'POST'):
+        vaccineID = request.form.get('VaccineID')
+        userID = request.form.get('userID')
+        dateString = request.form.get('vaccineDate')
+        vaccineDate = datetime.strptime(dateString, '%Y-%m-%d').date()
+        dosage= request.form.get('dosage')
+        CampId= request.form.get('campId')
+        vaccineCode=request.form.get('v_code')
+        licenseNo=request.form.get('license')
+        HealthCentreID=request.form.get('HealthCentreID') 
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO VaccinationRecords(VaccineID,UserID,VaccineDate,PublicHealthCentreID,DosageNo,CampID,DoctorLicenseNo,VaccineCode) Values (%s,%s,%s,%s,%s,%s,%s,%s)",[vaccineID,userID,vaccineDate,HealthCentreID,dosage,CampId,licenseNo,vaccineCode])
+        mysql.connection.commit()
+        cur.close()
+    else:
+        return render_template('insertVaccineRecord.html')
 
 @app.route('/generalQuery', methods=['POST'])
 def generalQuery():

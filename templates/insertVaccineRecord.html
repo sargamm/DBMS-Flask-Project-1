@@ -40,6 +40,14 @@
 <div class="container">
     <h1 class="title text-center">INSERT VACCINATION RECORD</h1>
     <div class="row">
+        {% if errors %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Holy guacamole!</strong> {{ errors }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
         <div class="col-12 text-center">
         <form action="/addRecord" method="post" id="insert_vaccine_record_form">
             <div class="form-row col-12">

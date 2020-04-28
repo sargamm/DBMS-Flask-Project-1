@@ -1,0 +1,26 @@
+<div class="container">
+    <h1 class="title text-center">ADD STOCK</h1>
+    <div class="row">
+        <div class="col-12 text-center">
+        <form action="/UpdateAvailability" method="post" id="check_availability_form">
+            <div class="form-row col-12">
+                <div class="form-group col-md-4">
+                    <label for="vaccineID">Vaccine ID </label>
+                    <input type="text" name="vaccineID" required="true" class="form-control" id="contact" aria-describedby="emailHelp" placeholder="Enter Vaccine ID">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="HealthCentreID">Health Centre ID</label>
+                    <input type="text" name="HealthCentreID" required="true" class="form-control" id="adhar" placeholder="Health Centre ID">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="Stock">Quantity Added</label>
+                    <input type="text" name="Stock" required="true" class="form-control" id="stock" placeholder="Stock">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary col-10">Submit</button>
+        </form>
+        </div>
+        <div class="col-12 p-3" id="check_availability_form_result">
+        </div>
+    </div>
+</div>

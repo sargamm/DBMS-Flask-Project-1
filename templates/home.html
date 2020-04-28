@@ -64,15 +64,19 @@
     <h1 class="title">SERVICES</h1>
     <div class="row">
     <div class="col-md-4 services">
-    <img src="{{url_for('static', filename='vaccinerecordicon.png')}}" class="service-img" href="#history">
-    <a class="icon-heading" href="#history">Check Vaccination Record</a>
+    <img src="{{url_for('static', filename='vaccinerecordicon.png')}}" class="service-img" >
+    <h4 class="icon-heading" href="#history">Check Vaccination Record</h4>
     </div>
-      {% if session.loggedIn and session.roleID==2 %}
+      {% if session.loggedIn and (session.roleID == 2 or session.roleID == 1) %}
     <div class="col-md-4 services">
-    <img src="{{url_for('static', filename='vaccineicon.png')}}" class="service-img" href="/addRecord">
-    <a class="icon-heading" href="/addRecord">Add Vaccination Record</a>
+    <img src="{{url_for('static', filename='vaccineicon.png')}}" class="service-img" onclick="window.open('/addRecord')">
+    <h4 class="icon-heading" href="/addRecord">Add Vaccination Record</h4>
     </div>
-     { % endif %}
+    <div class="col-md-4 services">
+      <img src="{{url_for('static', filename='availability.jpeg')}}" class="service-img" onclick="window.open('/Availability')">
+      <h4 class="icon-heading">Check availability</h4>
+    </div>
+     {% endif %}
     <div class="col-md-4 services">
     <img src="{{url_for('static', filename='healthfacility.png')}}" class="service-img">
     <h4 class="icon-heading">Nearby Vaccine Facility</h4>
@@ -86,6 +90,18 @@
     <section class="country-record" id="country">
       {% include 'country_record_form.html' %}
     </section>
+    {% if session.loggedIn and (session.roleID == 2 or session.roleID == 1) %}
+    <section class="vaccine-availability" id="availability">
+      {% include 'checkAvailability.html' %}
+    </section>
+    {% endif %}
+    {% if session.loggedIn and (session.roleID == 1) %}
+    <section class="vaccine-availability-update" id="availability-update">
+      {% include 'addStock.html' %}
+    </section>
+    {% endif %}
+    
+
     <section class="pt-5" id="covid">
       <div class="fluid-container text-center">
         <h1 class="title">COVID DATA INDIA</h1>
@@ -127,6 +143,7 @@
       submitAjaxRequest('vaccine_record_form')
       submitAjaxRequest('country_record_form')
       submitAjaxRequest('insert_vaccine_record_form')
+      submitAjaxRequest('check_availability_form')
     </script>
   </body>
 </html>

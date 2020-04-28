@@ -203,6 +203,7 @@ def addRecord():
         cur.execute("INSERT INTO VaccinationRecords(VaccineID,UserID,VaccineDate,PublicHealthCentreID,DosageNo,CampID,DoctorLicenseNo,VaccineCode) Values (%s,%s,%s,%s,%s,%s,%s,%s)",[vaccineID,userID,vaccineDate,HealthCentreID,dosage,CampId,licenseNo,vaccineCode])
         mysql.connection.commit()
         cur.close()
+        return render_template('insertVaccineRecord.html')
     else:
         return render_template('insertVaccineRecord.html')
 
@@ -240,6 +241,36 @@ def countryWiseRequirements():
         return jsonify({'data': render_template('result.html', object_list=records, header_list=header_list)})    
     else:
         return redirect("/")
+@app.route('/Availability', methods=['GET','POST'])
+def checkAvailability():
+    if (request.method == 'POST'):
+        vaccineID=request.form.get('vaccineID')
+        heathCentreID=request.form.get('HealthCentreID')
+        cur=mysql.connection.cursor()
+        cur.execute("select count,VaccineID from Availability where VaccineID=%s and HealthCentreID=%s", [vaccineID,heathCentreID])
+        records=cur.fetchall()
+        header_list=['Stock','vaccine ID']
+        return jsonify({'data': render_template('result.html', object_list=records, header_list=header_list)})    
+    else:
+        return render_template('checkAvailability.html')
+
+@app.route('/UpdateAvailability', methods=['GET','POST'])
+def UpdateAvailability():
+    if (request.method == 'POST'):
+        vaccineID=request.form.get('vaccineID')
+        heathCentreID=request.form.get('HealthCentreID')
+        stock=request.form.get('Stock')
+        cur=mysql.connection.cursor()
+        cur.execute("select Count from Availability where VaccineID=%s and HealthCentreID=%s", [vaccineID,heathCentreID])
+        records=cur.fetchall()
+        if records == ():
+            cur.execute("insert into Availability(Count,VaccineID,HealthCentreID) values (%s,%s,%s)",[stock,vaccineID,heathCentreID])
+        else:
+            stock=int(stock)+int(records[0][0])
+            cur.execute("Update Availability set Count=%s where VaccineID=%s and HealthCentreID=%s",[stock,vaccineID,heathCentreID])
+        return redirect("/")
+    else:
+        return render_template('addStock.html')
 
 @app.route('/deleteRecord')
 def deleteRecord():

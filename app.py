@@ -320,7 +320,27 @@ def RegisterUser():
     else:
         return render_template('RegisterUser.html')
 
+@app.route('/moreInfo',methods=['GET','POST'])
+def moreInfo():
+    if(request.method=='POST'):
+        cur=mysql.connection.cursor()
+        cur.execute("select * from DiseaseVaccineMap")
+        records=cur.fetchall()
+        header_list=[i[0] for i in cur.description]
+        return jsonify({'data': render_template('result.html', object_list=records, header_list=header_list)})      
+    else:
+        return render_template('moreInfo.html')
 
+@app.route('/HealthCentreVaccinationRecords',methods=['GET','POST'])
+def HealthCentreRecords():
+    if(request.method=='POST'):
+        cur=mysql.connection.cursor()
+        cur.execute("select * from VaccinationRecords where HealthCentreID=%s",session['specificID'])
+        records=cur.fetchall()
+        header_list=[i[0] for i in cur.description]
+        return jsonify({'data': render_template('result.html', object_list=records, header_list=header_list)})      
+    else:
+        return render_template('HealthCentreRecord.html')
 
 
 @app.route('/deleteRecord')

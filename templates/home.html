@@ -81,6 +81,12 @@
       <h4 class="icon-heading">Register New User</h4>
     </div>
      {% endif %}
+     {% if session.loggedIn and ( session.roleID == 1) %}
+     <div class="col-md-4 services">
+      <img src="{{url_for('static', filename='healthcentre.png')}}" class="service-img" onclick="window.open('/HealthCentreVaccinationRecords')">
+      <h4 class="icon-heading">Check Vaccine Records of Your Health centre</h4>
+    </div>
+     {% endif %}
     <div class="col-md-4 services">
     <img src="{{url_for('static', filename='healthfacility.png')}}" class="service-img">
     <h4 class="icon-heading">Nearby Vaccine Facility</h4>

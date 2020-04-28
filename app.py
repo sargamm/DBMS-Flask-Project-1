@@ -288,6 +288,33 @@ def checkAvailabilityForUser():
     else:
         return render_template('userAvailability.html')
 
+@app.route('/RegisterUser', methods=['GET','POST'])
+def RegisterUser():
+    if(request.method=='POST'):
+        errors=[]
+        name = request.form.get('name')
+        email = request.form.get('email')
+        dateString = request.form.get('dob')
+        dob = datetime.strptime(dateString, '%Y-%m-%d').date()
+        gender = request.form.get('gender')
+        pincode = request.form.get('pincode')
+        contact = request.form.get('contact')
+        address=request.form.get('address')
+        State=request.form.get('state')
+        g_name=request.form.get('g_name')
+        aadhar = request.form.get('aadhar')
+        if (len(pincode) < 6):
+            errors.append("Pincode too short")
+        if(len(errors)==0):
+            cur=mysql.connection.cursor()
+            cur.execute( "insert into users(full_name,Gender,DOB,emailID,pincode,state,Address,Contact,GuardianName,AadharNumber) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", [name,gender,dob,email,pincode,State,address,contact,g_name,aadhar])
+            mysql.connection.commit()
+            cur.close()
+            return redirect('/')
+        else:
+            return render_template('RegisterUser.html',errors=errors)
+    else:
+        return render_template('RegisterUser.html')
 @app.route('/deleteRecord')
 def deleteRecord():
     return 'delete record'

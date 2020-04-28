@@ -84,8 +84,8 @@
         <!-- Doctor Role -->
         {% if session.roleID == 1 %}
             {% include 'healthCentre.html' %}
-        {% else %}
-            
+        {% elif session.roleID == 3 %}
+        <button type="button" class="btn btn-primary col-12" onclick="window.location.href = '/vaccineCountByState'">STATEWISE VACCINE COUNT</button>
         {% endif %}
         <button type="button" class="btn btn-danger col-12" onclick="window.location.href = '/deleteAccount'">DELETE ACCOUNT</button>
     {% endif %}

@@ -40,78 +40,78 @@
 
 
 {% block content %}
-{% if not session.loggedIn %}
-<div class="container">
-    <h1 class="title text-center">REGISTER HEALTH CENTRE</h1>
-    <div class="row">
-        <div class="col-12 text-center">
-        <form action="/HealthCentreSignup" method="post" id="register_health_centre_form">
-            <div class="form-row">
-                <div class="form-group col-md-4">
-                    <label for="name">Public Health Centre Name</label>
-                    <input type="text" name="name" class="form-control" id="name" placeholder="Enter Health Centre Name">
+    {% if not session.loggedIn %}
+    <div class="container">
+        <h1 class="title text-center">REGISTER HEALTH CENTRE</h1>
+        <div class="row">
+            <div class="col-12 text-center">
+            <form action="/HealthCentreSignup" method="post" id="register_health_centre_form">
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="name">Public Health Centre Name</label>
+                        <input type="text" name="name" class="form-control" id="name" placeholder="Enter Health Centre Name">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="inputContact">Contact Number</label>
+                        <input type="text" name="contact" required="required" size="10" minlength="10" maxlength="10" class="form-control" id="contact" aria-describedby="emailHelp" placeholder="Enter contact">
+                        <small id="contactHelp" class="form-text text-muted">We'll never share your contact with anyone else.</small>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="inputEmail">Email</label>
+                        <input type="email" name="email" required="required" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email">
+                        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                    </div>
                 </div>
-                <div class="form-group col-md-4">
-                    <label for="inputContact">Contact Number</label>
-                    <input type="text" name="contact" required="required" size="10" minlength="10" maxlength="10" class="form-control" id="contact" aria-describedby="emailHelp" placeholder="Enter contact">
-                    <small id="contactHelp" class="form-text text-muted">We'll never share your contact with anyone else.</small>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="inputpassword">Password</label>
+                        <input type="password" name="password" required="required" minlength="6" class="form-control" id="password" aria-describedby="password" placeholder="Enter password">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="confirmpassword">Confirm Password</label>
+                        <input type="password" name="c_password" required="required" class="form-control" id="confirm-password" aria-describedby="password" placeholder="Confirm password">
+                    </div>
                 </div>
-                <div class="form-group col-md-4">
-                    <label for="inputEmail">Email</label>
-                    <input type="email" name="email" required="required" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email">
-                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                <div class="form-row col-12">
+                    <div class="form-group col-md-6">
+                        <label for="pincode">PinCode</label>
+                        <input type="text" name="pincode" required="true" class="form-control" id="pincode" placeholder="Enter pincode">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="address">Address</label>
+                        <input type="text" name="address" required="true" class="form-control" id="address" placeholder="Enter Address">
+                    </div>
                 </div>
+                <div class="form-row col-12">
+                    <div class="form-group col-md-6">
+                        <label for="NoOfHealthCamps">Number of Health Camps</label>
+                        <input type="text" name="NoOfHealthCamps" required="true" class="form-control" id="NoOfHealthCamps" placeholder="Number of Vaccine Camps">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="OperationalSince">Operational Since</label>
+                        <input type="date" name="OperationalSince" class="form-control" id="OperationalSince" placeholder="Operational Since">
+                    </div>
+                </div>
+                <div class="form-row col-12">
+                    <div class="f{% endif %}
+                    {% endblock %}orm-group col-md-6">
+                        <label for="State">State</label>
+                        <input type="text" name="state" required="true" class="form-control" id="state" placeholder="Enter state">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="City">City</label>
+                        <input type="text" name="City" required="true" class="form-control" id="City" placeholder="Enter City">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary col-10">Submit</button>
+            </form>
             </div>
-            <div class="form-row">
-                <div class="form-group col-md-6">
-                    <label for="inputpassword">Password</label>
-                    <input type="password" name="password" required="required" minlength="6" class="form-control" id="password" aria-describedby="password" placeholder="Enter password">
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="confirmpassword">Confirm Password</label>
-                    <input type="password" name="c_password" required="required" class="form-control" id="confirm-password" aria-describedby="password" placeholder="Confirm password">
-                </div>
-            </div>
-            <div class="form-row col-12">
-                <div class="form-group col-md-6">
-                    <label for="pincode">PinCode</label>
-                    <input type="text" name="pincode" required="true" class="form-control" id="pincode" placeholder="Enter pincode">
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="address">Address</label>
-                    <input type="text" name="address" required="true" class="form-control" id="address" placeholder="Enter Address">
-                </div>
-            </div>
-            <div class="form-row col-12">
-                <div class="form-group col-md-6">
-                    <label for="NoOfHealthCamps">Number of Health Camps</label>
-                    <input type="text" name="NoOfHealthCamps" required="true" class="form-control" id="NoOfHealthCamps" placeholder="Number of Vaccine Camps">
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="OperationalSince">Operational Since</label>
-                    <input type="date" name="OperationalSince" class="form-control" id="OperationalSince" placeholder="Operational Since">
-                </div>
-            </div>
-            <div class="form-row col-12">
-                <div class="f{% endif %}
-                {% endblock %}orm-group col-md-6">
-                    <label for="State">State</label>
-                    <input type="text" name="state" required="true" class="form-control" id="state" placeholder="Enter state">
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="City">City</label>
-                    <input type="text" name="City" required="true" class="form-control" id="City" placeholder="Enter City">
-                </div>
-            </div>
-            <button type="submit" class="btn btn-primary col-10">Submit</button>
-        </form>
         </div>
-        </div>
-        </div>
-        {% else %}
-        <div class="container">
-            <h2>Already logged in. Logout to create a new account. Go to <a href="/login">Home</a></h2>
-        </div>
+    </div>
+    {% else %}
+            <div class="container">
+                <h2>Already logged in. Logout to create a new account. Go to <a href="/login">Home</a></h2>
+            </div>
     {% endif %}
     <div class="col-12" id="register_health_centre_form_result"></div>
 {% endblock %}

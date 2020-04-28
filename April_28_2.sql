@@ -156,6 +156,23 @@ INSERT INTO `CountryImmunizationRecords` VALUES ('AF','Afghanistan',90281),('AL'
 UNLOCK TABLES;
 
 --
+-- Temporary table structure for view `CountryWiseRequirements`
+--
+
+DROP TABLE IF EXISTS `CountryWiseRequirements`;
+/*!50001 DROP VIEW IF EXISTS `CountryWiseRequirements`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `CountryWiseRequirements` AS SELECT 
+ 1 AS `CountryName`,
+ 1 AS `CountryCode`,
+ 1 AS `VaccineName`,
+ 1 AS `DiseaseName`,
+ 1 AS `SpreadBy`,
+ 1 AS `Complications`*/;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Table structure for table `Disease`
 --
 
@@ -185,6 +202,27 @@ LOCK TABLES `Disease` WRITE;
 INSERT INTO `Disease` VALUES ('A00.0','CHOLERA','Watery Diarrhea, vomiting, rapid heart rate.','INV','Spreads by drinking water or eating food contaminated by bacterium.','Rapid fluid loss, low blood sugar. '),('A08.0','ROTAVIRUS','decreased urination, dry mouth and throat.','LAV','It spreads fecal-oral contact.','Severe diarrhea, dehydration, electrolyte imbalance'),('A22.9','ANTHRAX','Sore throat, mild fever, shortness of breath','TXV','Spreads through wound in skin,','Inflammation of membranes fluid covering brain and spinal cord'),('A33','TETANUS','Stiffness of neck, jaw and other muscles, fever and sweating.','TXV','Spreads when dirt enters a wound or cut.','Fractures, aspiration pneumonia.'),('A36.9','DIPHTHERIA','Sore throat and hoarseness, swollen glands(enlarged lymph nodes)','TXV','Spreads through respiratory droplets like coughing and sneezing.','paralysis, lung infection, nerve damage.'),('A39.9','MENINGOCOCCAL','Sudden high fever, nect stiffness, nausea or vomiting','SRPC','spreads by sharing respiratory and throat secretions.','Vasomotor collapse and shock'),('A80.9','Poliomyelitis (Polio)','Fever, sore throat, headache, vomitting, fatique.','INV','It is spread through infected fecal matter entering mouth.','Paralysis of muscles used for breathing'),('A82.9','RABIES','Irritability or aggressiveness, agitation, confusion','INV','Spread through saliva of infected animals.','Insomnia, anxiety, agitation'),('A95.9','YELLOW FEVER','Fever, Headache, Muscles aches, Nausea','LAV','Spread by bite of an infected female mosquito, ','Vomitting, bleeding, jaundice, liver failure, death.'),('B01.89','CHICKEN-POX','loss of appetite, aching muscles','LAV','spreads by closeness and contact with someone with chickenpox','bacterial infectons of skin'),('B02.9','SHINGLES','One-sided stabbing pain, headache, nausea, body aches','SRPC','Caused by varicella zoster virus. Can be caused after chickenpox.','Postherpetic neuralgia, Vision loss'),('B03','Small-Pox','sudden onset of high fever, malaise, widespread skin rash, severe headache, diarrhoea','LAV','infected person talks, coughs or sneezes small droplets containing infectious agents into the air. The droplets in the air may be breathed in by those nearby or may contaminate objects, Smallpox can also be spread by direct contact with blister fluid or contaminated objects.','Eye problems including corneal ulceration and blindnes, Bronchopneumoni, Arthritis, Osteomyelitis'),('B05.9','MEASLES','runny or blocked nose, sneezing, swollen eyelids','LAV','infection with rubeola virus. ','diarrhoea, vomitting, middle ear infection.'),('B06.9','RUBELLA','swollen and tender lymph nodes, mild fever, muscle pain, inflamed or red eyes.','LAV','It can be spread when an infected person coughs or sneezes.','Bleeding problems, testicular swelling.'),('B15.9','HEPATITIS A','flu-like sumptoms, dark urine, loss of appetite','INV','Spreads when virus from contaminated object is taken.','Liver Failure, Guillain Barre Syndrome.'),('B19.10','HEBATITIS B','Abdominal pain, dark urine, joint pain, loss of appetite','SRPC','Spread when blood,semen or other body fluid infected with Hepatitis B','Scarring of the liver, liver cancer.'),('B26.9','Mumps','pain while chewing, fever, pain in swollen salivary gland, muscle aches.','LAV','It can be transmitted by respiratory secretions.','Meningitis, encephalities.'),('B96.3','Haemophilus influenzae b (Hib)','headache, stiff neck, joint pain, fever.','SRPC','Bacteria can move to other parts of body and cause infection.','lung inflammation, joint infection'),('G00.1','Pneumococcal ','Fever, chills, chest pain, shortness of breath','SRPC','Spreads through contact with ill people or who have bacteria in throat','Empyema, pericarditis and respiratory failure'),('R87.810','human papillomavirus (hpv)','warts, genital warts.','SRPC','Spread by having intercourse with someone who has the virus.','Cancer in cervix');
 /*!40000 ALTER TABLE `Disease` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Temporary table structure for view `DiseaseVaccineMap`
+--
+
+DROP TABLE IF EXISTS `DiseaseVaccineMap`;
+/*!50001 DROP VIEW IF EXISTS `DiseaseVaccineMap`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `DiseaseVaccineMap` AS SELECT 
+ 1 AS `VaccineID`,
+ 1 AS `purpose`,
+ 1 AS `VaccineName`,
+ 1 AS `requiredDosages`,
+ 1 AS `ICD10`,
+ 1 AS `DiseaseName`,
+ 1 AS `Symptoms`,
+ 1 AS `SpreadBy`,
+ 1 AS `Complications`,
+ 1 AS `VaccinationType`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `DiseaseVaccineRelation`
@@ -233,7 +271,7 @@ CREATE TABLE `PublicHealthCentre` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `idx_PublicHealthCentre_state` (`state`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -262,7 +300,7 @@ CREATE TABLE `RegisteredPractitioners` (
   PRIMARY KEY (`LicenseNumber`,`userID`),
   KEY `healthCentreID` (`healthCentreID`),
   KEY `userID` (`userID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -384,7 +422,7 @@ CREATE TABLE `VaccineCamps` (
   KEY `fk_VaccineCamps_healthCentre_idx` (`HealthCentreID`),
   CONSTRAINT `VaccineCamps_ibfk_1` FOREIGN KEY (`VaccineIDs`) REFERENCES `Vaccinations` (`VaccineID`),
   CONSTRAINT `fk_VaccineCamps_healthCentre` FOREIGN KEY (`HealthCentreID`) REFERENCES `PublicHealthCentre` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -438,13 +476,13 @@ CREATE TABLE `users` (
   `DOB` date NOT NULL,
   `emailID` varchar(255) DEFAULT NULL,
   `pincode` int(11) NOT NULL,
-  `state` varchar(255) DEFAULT NULL,
+  `state` varchar(50) DEFAULT NULL,
   `Address` varchar(255) DEFAULT NULL,
-  `Contact` varchar(255) NOT NULL,
-  `GuardianName` varchar(255) DEFAULT NULL,
-  `Aadhar Number` varchar(255) DEFAULT NULL,
+  `Contact` varchar(15) NOT NULL,
+  `GuardianName` varchar(50) DEFAULT NULL,
+  `AadharNumber` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `Aadhar Number_UNIQUE` (`Aadhar Number`)
+  UNIQUE KEY `Aadhar Number_UNIQUE` (`AadharNumber`)
 ) ENGINE=InnoDB AUTO_INCREMENT=116 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -509,6 +547,42 @@ DELIMITER ;
 --
 -- Dumping routines for database 'vaccination_table'
 --
+
+--
+-- Final view structure for view `CountryWiseRequirements`
+--
+
+/*!50001 DROP VIEW IF EXISTS `CountryWiseRequirements`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`binaryblood`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `CountryWiseRequirements` AS select `C`.`CountryName` AS `CountryName`,`C`.`CountryCode` AS `CountryCode`,`D`.`VaccineName` AS `VaccineName`,`D`.`DiseaseName` AS `DiseaseName`,`D`.`SpreadBy` AS `SpreadBy`,`D`.`Complications` AS `Complications` from (`vaccination_table`.`CountryImmunizationRecords` `C` join `vaccination_table`.`DiseaseVaccineMap` `D` on((`D`.`VaccineID` = `C`.`VaccinationID`))) order by `C`.`CountryName` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `DiseaseVaccineMap`
+--
+
+/*!50001 DROP VIEW IF EXISTS `DiseaseVaccineMap`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`binaryblood`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `DiseaseVaccineMap` AS select `V`.`VaccineID` AS `VaccineID`,`V`.`purpose` AS `purpose`,`V`.`name` AS `VaccineName`,`V`.`requiredDosages` AS `requiredDosages`,`S`.`ICD10` AS `ICD10`,`S`.`Name` AS `DiseaseName`,`S`.`Symptoms` AS `Symptoms`,`S`.`SpreadBy` AS `SpreadBy`,`S`.`Complications` AS `Complications`,`S`.`VaccinationType` AS `VaccinationType` from (`vaccination_table`.`Vaccinations` `V` join (select `vaccination_table`.`Disease`.`ICD10` AS `ICD10`,`vaccination_table`.`Disease`.`Name` AS `Name`,`vaccination_table`.`Disease`.`Symptoms` AS `Symptoms`,`vaccination_table`.`Disease`.`VaccinationType` AS `VaccinationType`,`vaccination_table`.`Disease`.`SpreadBy` AS `SpreadBy`,`vaccination_table`.`Disease`.`Complications` AS `Complications`,`vaccination_table`.`DiseaseVaccineRelation`.`VaccineID` AS `VaccineID` from (`vaccination_table`.`Disease` left join `vaccination_table`.`DiseaseVaccineRelation` on((`vaccination_table`.`Disease`.`ICD10` = `vaccination_table`.`DiseaseVaccineRelation`.`ICDCode`)))) `S` on((`V`.`VaccineID` = `S`.`VaccineID`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -519,4 +593,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-28  0:22:02
+-- Dump completed on 2020-04-28  4:29:58

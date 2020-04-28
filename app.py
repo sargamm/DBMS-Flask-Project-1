@@ -191,7 +191,7 @@ def logout():
 def addRecord():
     if( request.method == 'POST'):
         vaccineID = request.form.get('VaccineID')
-        userID = request.form.get('userID')
+        aadhar=request.form.get('Aadhar')
         dateString = request.form.get('vaccineDate')
         vaccineDate = datetime.strptime(dateString, '%Y-%m-%d').date()
         dosage= request.form.get('dosage')
@@ -200,6 +200,9 @@ def addRecord():
         licenseNo=request.form.get('license')
         HealthCentreID=request.form.get('HealthCentreID') 
         cur = mysql.connection.cursor()
+        cur.execute("select id from users where AadharNumber like %s",[aadhar])
+        x=cur.fetchone()
+        userID=x[0]
         cur.execute("INSERT INTO VaccinationRecords(VaccineID,UserID,VaccineDate,PublicHealthCentreID,DosageNo,CampID,DoctorLicenseNo,VaccineCode) Values (%s,%s,%s,%s,%s,%s,%s,%s)",[vaccineID,userID,vaccineDate,HealthCentreID,dosage,CampId,licenseNo,vaccineCode])
         mysql.connection.commit()
         cur.close()
@@ -211,10 +214,11 @@ def addRecord():
 def generalQuery():
     try:
         contact = request.form.get('contact')
+        name=request.form.get('name')
         aadhar = request.form.get('aadhar')
-        query = 'SELECT V.VaccineDate, S.name, V.DosageNo FROM VaccinationRecords as V LEFT JOIN Vaccinations as S ON V.VaccineID=S.VaccineID where V.UserID=(Select id from users where Contact="%s" and AadharNumber="%s")'  
+        query = 'SELECT V.VaccineDate, S.name, V.DosageNo FROM VaccinationRecords as V LEFT JOIN Vaccinations as S ON V.VaccineID=S.VaccineID where V.UserID=(Select id from users where (Contact="%s" and name="%s") or AadharNumber="%s")'  
         cur = mysql.connection.cursor()
-        cur.execute(str(query), [contact, aadhar])
+        cur.execute(str(query), [contact,name,aadhar])
         result = cur.fetchall()
         num_fields = len(cur.description)
         header_list = [i[0] for i in cur.description]
@@ -315,6 +319,10 @@ def RegisterUser():
             return render_template('RegisterUser.html',errors=errors)
     else:
         return render_template('RegisterUser.html')
+
+
+
+
 @app.route('/deleteRecord')
 def deleteRecord():
     return 'delete record'

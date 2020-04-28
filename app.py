@@ -266,10 +266,9 @@ def logout():
 @app.route('/addRecord', methods=['POST','GET'])
 def addRecord():
     if( request.method == 'POST'):
-        cur = mysql.connection.cursor()
         try:
             vaccineID = request.form.get('VaccineID')
-            userID = request.form.get('userID')
+            aadhar=request.form.get('Aadhar')
             dateString = request.form.get('vaccineDate')
             vaccineDate = datetime.strptime(dateString, '%Y-%m-%d').date()
             dosage= request.form.get('dosage')
@@ -277,27 +276,29 @@ def addRecord():
             vaccineCode=request.form.get('v_code')
             licenseNo=request.form.get('license')
             HealthCentreID=request.form.get('HealthCentreID') 
+            cur = mysql.connection.cursor()
+            cur.execute("select id from users where AadharNumber like %s",[aadhar])
+            x=cur.fetchone()
+            userID=x[0]
             cur.execute("INSERT INTO VaccinationRecords(VaccineID,UserID,VaccineDate,PublicHealthCentreID,DosageNo,CampID,DoctorLicenseNo,VaccineCode) Values (%s,%s,%s,%s,%s,%s,%s,%s)",[vaccineID,userID,vaccineDate,HealthCentreID,dosage,CampId,licenseNo,vaccineCode])
             mysql.connection.commit()
-            cur.close()
-            return render_template('insertVaccineRecord.html',  errors="record inserted successfully!")
         except Exception as e:
-            errors = "Could not insert record"
-            try:
-                errors = "VacciCure Error: Check your input again!"
-            finally:
-                return render_template('insertVaccineRecord.html', errors=errors)    
+            mysql.connection.rollback()
+        finally:
+            cur.close()
+        return render_template('insertVaccineRecord.html')
     else:
-        return render_template('insertVaccineRecord.html', errors=errors)
+        return render_template('insertVaccineRecord.html', errors="POST REQUEST ONLY! SWIPER NO SWIPING!")
 
 @app.route('/generalQuery', methods=['POST'])
 def generalQuery():
     try:
         contact = request.form.get('contact')
+        name=request.form.get('name')
         aadhar = request.form.get('aadhar')
-        query = 'SELECT V.VaccineDate, S.name, V.DosageNo FROM VaccinationRecords as V LEFT JOIN Vaccinations as S ON V.VaccineID=S.VaccineID where V.UserID=(Select id from users where Contact="%s" and AadharNumber="%s")'  
+        query = 'SELECT V.VaccineDate, S.name, V.DosageNo FROM VaccinationRecords as V LEFT JOIN Vaccinations as S ON V.VaccineID=S.VaccineID where V.UserID=(Select id from users where (Contact="%s" and name="%s") or AadharNumber="%s")'  
         cur = mysql.connection.cursor()
-        cur.execute(str(query), [contact, aadhar])
+        cur.execute(str(query), [contact,name,aadhar])
         result = cur.fetchall()
         num_fields = len(cur.description)
         header_list = [i[0] for i in cur.description]
@@ -324,6 +325,81 @@ def countryWiseRequirements():
         return jsonify({'data': render_template('result.html', object_list=records, header_list=header_list)})    
     else:
         return redirect(url_for('hello_world'))
+
+@app.route('/Availability', methods=['GET','POST'])
+def checkAvailability():
+    if (request.method == 'POST'):
+        vaccineID=request.form.get('vaccineID')
+        heathCentreID=request.form.get('HealthCentreID')
+        cur=mysql.connection.cursor()
+        cur.execute("select count,VaccineID from Availability where VaccineID=%s and HealthCentreID=%s", [vaccineID,heathCentreID])
+        records=cur.fetchall()
+        header_list=['Stock','vaccine ID']
+        return jsonify({'data': render_template('result.html', object_list=records, header_list=header_list)})    
+    else:
+        return render_template('checkAvailability.html')
+
+@app.route('/UpdateAvailability', methods=['GET','POST'])
+def UpdateAvailability():
+    if (request.method == 'POST'):
+        vaccineID=request.form.get('vaccineID')
+        heathCentreID=request.form.get('HealthCentreID')
+        stock=request.form.get('Stock')
+        cur=mysql.connection.cursor()
+        cur.execute("select Count from Availability where VaccineID=%s and HealthCentreID=%s", [vaccineID,heathCentreID])
+        records=cur.fetchone()
+        if records == None:
+            cur.execute("insert into Availability(Count,VaccineID,HealthCentreID) values (%s,%s,%s)",[stock,vaccineID,heathCentreID])
+        else:
+            stock=int(stock)+int(records[0])
+            print(stock)
+            cur.execute("Update Availability set Count=%s where VaccineID=%s and HealthCentreID=%s",[stock,vaccineID,heathCentreID])
+        mysql.connection.commit()
+        cur.close()
+        return redirect("/")
+    else:
+        return render_template('addStock.html')
+        
+@app.route('/AvailabilityforUser', methods=['GET','POST'])
+def checkAvailabilityForUser():
+    if (request.method == 'POST'):
+        vaccineID=request.form.get('vaccineID')
+        cur=mysql.connection.cursor()
+        cur.execute("select * from PublicHealthCentre where id in(select healthCentreID from Availability where Count>0 and VaccineID=%s)", [vaccineID])
+        records=cur.fetchall()
+        header_list=[i[0] for i in cur.description]
+        return jsonify({'data': render_template('result.html', object_list=records, header_list=header_list)})    
+    else:
+        return render_template('userAvailability.html')
+
+@app.route('/RegisterUser', methods=['GET','POST'])
+def RegisterUser():
+    if(request.method=='POST'):
+        errors=[]
+        name = request.form.get('name')
+        email = request.form.get('email')
+        dateString = request.form.get('dob')
+        dob = datetime.strptime(dateString, '%Y-%m-%d').date()
+        gender = request.form.get('gender')
+        pincode = request.form.get('pincode')
+        contact = request.form.get('contact')
+        address=request.form.get('address')
+        State=request.form.get('state')
+        g_name=request.form.get('g_name')
+        aadhar = request.form.get('aadhar')
+        if (len(pincode) < 6):
+            errors.append("Pincode too short")
+        if(len(errors)==0):
+            cur=mysql.connection.cursor()
+            cur.execute( "insert into users(full_name,Gender,DOB,emailID,pincode,state,Address,Contact,GuardianName,AadharNumber) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", [name,gender,dob,email,pincode,State,address,contact,g_name,aadhar])
+            mysql.connection.commit()
+            cur.close()
+            return redirect('/')
+        else:
+            return render_template('RegisterUser.html',errors=errors)
+    else:
+        return render_template('RegisterUser.html')
+
 
 @app.route('/deleteAccount', methods=["GET"])
 def deleteRecord():

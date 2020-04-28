@@ -191,7 +191,7 @@ def logout():
 def addRecord():
     if( request.method == 'POST'):
         vaccineID = request.form.get('VaccineID')
-        userID = request.form.get('userID')
+        aadhar=request.form.get('Aadhar')
         dateString = request.form.get('vaccineDate')
         vaccineDate = datetime.strptime(dateString, '%Y-%m-%d').date()
         dosage= request.form.get('dosage')
@@ -200,6 +200,9 @@ def addRecord():
         licenseNo=request.form.get('license')
         HealthCentreID=request.form.get('HealthCentreID') 
         cur = mysql.connection.cursor()
+        cur.execute("select id from users where AadharNumber like %s",[aadhar])
+        x=cur.fetchone()
+        userID=x[0]
         cur.execute("INSERT INTO VaccinationRecords(VaccineID,UserID,VaccineDate,PublicHealthCentreID,DosageNo,CampID,DoctorLicenseNo,VaccineCode) Values (%s,%s,%s,%s,%s,%s,%s,%s)",[vaccineID,userID,vaccineDate,HealthCentreID,dosage,CampId,licenseNo,vaccineCode])
         mysql.connection.commit()
         cur.close()
@@ -211,10 +214,11 @@ def addRecord():
 def generalQuery():
     try:
         contact = request.form.get('contact')
+        name=request.form.get('name')
         aadhar = request.form.get('aadhar')
-        query = 'SELECT V.VaccineDate, S.name, V.DosageNo FROM VaccinationRecords as V LEFT JOIN Vaccinations as S ON V.VaccineID=S.VaccineID where V.UserID=(Select id from users where Contact="%s" and AadharNumber="%s")'  
+        query = 'SELECT V.VaccineDate, S.name, V.DosageNo FROM VaccinationRecords as V LEFT JOIN Vaccinations as S ON V.VaccineID=S.VaccineID where V.UserID=(Select id from users where (Contact="%s" and name="%s") or AadharNumber="%s")'  
         cur = mysql.connection.cursor()
-        cur.execute(str(query), [contact, aadhar])
+        cur.execute(str(query), [contact,name,aadhar])
         result = cur.fetchall()
         num_fields = len(cur.description)
         header_list = [i[0] for i in cur.description]
@@ -287,6 +291,37 @@ def checkAvailabilityForUser():
         return jsonify({'data': render_template('result.html', object_list=records, header_list=header_list)})    
     else:
         return render_template('userAvailability.html')
+
+@app.route('/RegisterUser', methods=['GET','POST'])
+def RegisterUser():
+    if(request.method=='POST'):
+        errors=[]
+        name = request.form.get('name')
+        email = request.form.get('email')
+        dateString = request.form.get('dob')
+        dob = datetime.strptime(dateString, '%Y-%m-%d').date()
+        gender = request.form.get('gender')
+        pincode = request.form.get('pincode')
+        contact = request.form.get('contact')
+        address=request.form.get('address')
+        State=request.form.get('state')
+        g_name=request.form.get('g_name')
+        aadhar = request.form.get('aadhar')
+        if (len(pincode) < 6):
+            errors.append("Pincode too short")
+        if(len(errors)==0):
+            cur=mysql.connection.cursor()
+            cur.execute( "insert into users(full_name,Gender,DOB,emailID,pincode,state,Address,Contact,GuardianName,AadharNumber) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", [name,gender,dob,email,pincode,State,address,contact,g_name,aadhar])
+            mysql.connection.commit()
+            cur.close()
+            return redirect('/')
+        else:
+            return render_template('RegisterUser.html',errors=errors)
+    else:
+        return render_template('RegisterUser.html')
+
+
+
 
 @app.route('/deleteRecord')
 def deleteRecord():

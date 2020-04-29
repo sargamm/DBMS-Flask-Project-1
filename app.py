@@ -416,7 +416,7 @@ def HealthCentreRecords():
     if(request.method=='POST'):
         cur=mysql.connection.cursor()
         ID=session['specificID']
-        cur.execute("select * from VaccinationRecords where HealthCentreID=%s",ID)
+        cur.execute("select * from VaccinationRecords where HealthCentreID=%s",)
         records=cur.fetchall()
         header_list=[i[0] for i in cur.description]
         return jsonify({'data': render_template('result.html', object_list=records, header_list=header_list)})      

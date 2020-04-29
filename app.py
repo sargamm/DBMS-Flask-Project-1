@@ -282,17 +282,27 @@ def addRecord():
             vaccineCode=request.form.get('v_code')
             licenseNo=request.form.get('license')
             HealthCentreID=request.form.get('HealthCentreID') 
-            cur = mysql.connection.cursor()
-            cur.execute("select id from users where AadharNumber like %s",[aadhar])
+            cur = mysql.connection.cursor() 
+            cur.execute("select Count from Availability where VaccineID=%s and HealthCentreID=%s", [vaccineID,HealthCentreID])
             x=cur.fetchone()
+            print(x)
+            stock=int(x[0])
+            cur.execute("select id from users where AadharNumber like %s",[str(aadhar)])
+            x=cur.fetchone()
+            print(x)
             userID=x[0]
-            cur.execute("INSERT INTO VaccinationRecords(VaccineID,UserID,VaccineDate,PublicHealthCentreID,DosageNo,CampID,DoctorLicenseNo,VaccineCode) Values (%s,%s,%s,%s,%s,%s,%s,%s)",[vaccineID,userID,vaccineDate,HealthCentreID,dosage,CampId,licenseNo,vaccineCode])
-            mysql.connection.commit()
+            print(userID)
+            stock=stock-1
+            print(stock)
+            if(stock>=0):
+                cur.execute("INSERT INTO VaccinationRecords(VaccineID,UserID,VaccineDate,PublicHealthCentreID,DosageNo,CampID,DoctorLicenseNo,VaccineCode) Values (%s,%s,%s,%s,%s,%s,%s,%s)",[vaccineID,userID,vaccineDate,HealthCentreID,dosage,CampId,licenseNo,vaccineCode])
+                cur.execute("update Availability set Count=%s where healthCentreID=%s and VaccineID=%s",[stock,HealthCentreID,vaccineID])
+                mysql.connection.commit()
         except Exception as e:
             mysql.connection.rollback()
         finally:
             cur.close()
-        return render_template('insertVaccineRecord.html')
+        return redirect("/")
     else:
         return render_template('insertVaccineRecord.html')
 
@@ -468,7 +478,7 @@ def HealthCentreRecords():
     if(request.method=='POST'):
         cur=mysql.connection.cursor()
         ID=session['specificID']
-        cur.execute("select * from VaccinationRecords where HealthCentreID=%s",)
+        cur.execute("select * from VaccinationRecords where PublicHealthCentreID=%s",[ID])
         records=cur.fetchall()
         header_list=[i[0] for i in cur.description]
         return jsonify({'data': render_template('result.html', object_list=records, header_list=header_list)})      

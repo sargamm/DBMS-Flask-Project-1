@@ -9,9 +9,11 @@ from flask_mysqldb import MySQL
 from werkzeug.security import check_password_hash, generate_password_hash
 import mysql.connector
 
+from flask_cors import CORS
 
 #INITIALIZATIONS
 app = Flask(__name__)
+CORS(app)
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config['MYSQL_HOST'] = MYSQL_DATABASE_HOST
 app.config['MYSQL_USER'] = MYSQL_DATABASE_USER
@@ -154,7 +156,7 @@ def healthCentreUpdate():
     if (session.get("loggedIn") == None):
         return redirect('/login')
     else:
-        print("HERE!")
+        #print("HERE!")
         errors = []
         name = request.form.get('name')
         contact = request.form.get('contact')
@@ -206,16 +208,16 @@ def MedPractitionerRegister():
             if (len(errors) == 0):
                 cur = mysql.connection.cursor()
                 try:
-                    print("HERE!!!!")
+                    #print("HERE!!!!")
                     cur.execute("INSERT INTO AuthUsers(password, emailID, contact, roleID, name) VALUES (%s, %s, %s, %s, %s)", [password, email, contact, 2, name])
                     AuthuserId = cur.lastrowid
                     cur.execute("INSERT INTO RegisteredPractitioners(userID, LicenseNumber,name,practicingSince, healthCentreID) Values (%s,%s,%s,%s,%s)", [AuthuserId,licenseNo,name,PracticingSince,HealthCentreID])
                     userID=licenseNo
-                    print("User ID:", userID)
+                    #print("User ID:", userID)
                     cur.execute("INSERT INTO DoctorAuthMap(AuthID,DoctorID) VALUES (%s,%s)",[AuthuserId,userID])        
                     mysql.connection.commit()
                     cur.close()
-                    print("DONE!")
+                    #print("DONE!")
                     return redirect(url_for('login'))
                 except Exception as e:
                     mysql.connection.rollback()
@@ -243,14 +245,14 @@ def GovtOfficialRegister():
             c_password = request.form.get('c_password')
             gender = request.form.get('gender')
             pincode = request.form.get('pincode')
-            contact = request.form.get('contact')
+            contact = request.form.get('contact') 
             if (password != c_password):
                 errors.append("Passwords don't match")
             if (len(pincode) < 6):
                 errors.append("Pincode too short")
             if (len(errors) == 0):
                 cur = mysql.connection.cursor()
-                cur.execute("INSERT INTO AuthUsers(password, emailID, roleID, name) VALUES(%s, %s, %s, %s)", [password, email, 3, name])
+                cur.execute("INSERT INTO AuthUsers(password, emailID, roleID, name, contact) VALUES(%s, %s, %s, %s, %s)", [password, email, 3, name, str(contact)])
                 mysql.connection.commit()
                 cur.close()
                 return redirect(url_for('login'))
@@ -436,6 +438,40 @@ def vaccineIDInfoGUI():
     else:
         return render_template('vaccineCount.html', title="Vaccine Info for Specific ID")
 
+@app.route('/api/vaccineIDInfo', methods=["POST", "GET"])
+def vaccineIDInfoAPI():
+    vaccineID = ""
+    if (request.method == 'POST'):
+        try:
+            vaccineID = request.form['vaccineid']
+        except:
+            return jsonify({'error': '1', 'data': "Please specify a vaccine ID"})
+    else:
+        try:
+            vaccineID = request.args['vaccineid']
+        except:
+            return jsonify({'error': '1', 'data': "Please specify a vaccine ID"})
+    if (vaccineID != ""):
+        cur=mysql.connection.cursor()
+        args = (int(vaccineID), )
+        cur.callproc('getInfoOnVaccineID', args)
+        records = cur.fetchall()
+        #print(records)
+        header_list=[i[0] for i in cur.description]
+        cur.close()
+        result = []
+        #print(header_list)
+        for r in records:
+            temp = {}
+            for i in range(len(r)):
+                temp[header_list[i]] = r[i]
+            result.append(temp)
+        #print(result)
+        #cur.close()
+        return jsonify({'data': result})
+    else:
+        return jsonify({'error': '1', 'data': "Please specify a vaccine ID"})
+
 @app.route('/vaccineCountByState', methods=["POST", "GET"])
 def vaccineCountByStateGUI():
     if (request.method == 'POST'):
@@ -552,6 +588,31 @@ def changeNameAndContact():
             return render_template('index.html', errors=["Some error has occured!"])
     else:
         return redirect('/login')
+
+@app.route('/events')
+def getUpcomingVaccineCamps():
+    return render_template('events.html')
+
+@app.route('/api/dataPlot', methods=["GET"])
+def getDataPoints():
+    dist = request.args['dist']
+    lat = request.args['lat']
+    lon = request.args['lon']
+    if (dist is None or lat is None or lon is None):
+        return jsonify({'error': '1', 'data': "Incorrect arguments passed"})
+    args = (dist, lat, lon)
+    cur = mysql.connection.cursor()
+    cur.callproc('HealthCentrePoints', args)
+    records = cur.fetchall()
+    header_list=[i[0] for i in cur.description]
+    cur.close()
+    result = []
+    for r in records:
+        temp = {}
+        for i in range(len(r)):
+            temp[header_list[i]] = r[i]
+        result.append(temp)
+    return jsonify({'data': result})
 
 '''
     FOR THE IN QUERY!

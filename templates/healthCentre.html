@@ -5,6 +5,13 @@
         <form action="/HealthCentreUpdate" method="post" id="register_health_centre_form">
             <div class="form-row">
                 <div class="form-group col-md-6">
+                    <label for="name">Your PID:</label>
+                    <input type="text" disabled="true" value="{{ formData[0] }}" class="form-control" id="id" placeholder="Enter Health Centre Name">
+                    <small id="contactHelp" class="form-text text-muted">Do not share, with unauthorized personnel</small>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
                     <label for="name">Public Health Centre Name</label>
                     <input type="text" value="{{ formData[1] }}" name="name" class="form-control" id="name" placeholder="Enter Health Centre Name">
                 </div>

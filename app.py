@@ -594,7 +594,7 @@ def getUpcomingVaccineCamps():
     return render_template('events.html')
 
 @app.route('/api/dataPlot', methods=["GET"])
-def getDataPoints():
+def getDataPointsAPI():
     dist = request.args['dist']
     lat = request.args['lat']
     lon = request.args['lon']
@@ -613,6 +613,28 @@ def getDataPoints():
             temp[header_list[i]] = r[i]
         result.append(temp)
     return jsonify({'data': result})
+
+@app.route('/dataPlot', methods=["GET"])
+def getDataPoints():
+    dist = request.args['dist']
+    lat = request.args['lat']
+    lon = request.args['lon']
+    if (dist is None or lat is None or lon is None):
+        return jsonify({'error': '1', 'data': "Incorrect arguments passed"})
+    args = (dist, lat, lon)
+    cur = mysql.connection.cursor()
+    cur.callproc('HealthCentrePoints', args)
+    records = cur.fetchall()
+    header_list=[i[0] for i in cur.description]
+    cur.close()
+    result = []
+    for r in records:
+        temp = {}
+        for i in range(len(r)):
+            temp[header_list[i]] = r[i]
+        result.append(temp)
+    return render_template('dataPlot.html')
+
 
 '''
     FOR THE IN QUERY!

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      var map;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 2,
+          center: new google.maps.LatLng(2.8,-187.3),
+          mapTypeId: 'terrain'
+        });
+
+        // Create a <script> tag and set the USGS URL as the source.
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                // Typical action to be performed when the document is ready:
+                    data = JSON.parse(xhttp.responseText);
+                    main = data['data']
+                    console.log(xhttp.responseText)
+                    for(let i = 0; i <main.length; i++) {
+                        //var coords = main[i].coordinates;
+                        let latLng = new google.maps.LatLng(main[i]['lat'],main[i]['long']);
+
+                        let marker = new google.maps.Marker({
+                            position: latLng,
+                            map: map,
+                            title: main[i]['name']
+                        });
+
+                        marker.addListener('click', function() {
+                            let infowindow = new google.maps.InfoWindow({
+                                content: `${main[i]['name']}, ${main[i]['state']}`
+                            });
+                            infowindow.open(map, marker);
+                        });
+
+                    }
+                }
+            };
+            xhttp.open("GET", "api/dataPlot?dist={{ request.args.get('dist') }}&lat={{ request.args.get('lat') }}&lon={{ request.args.get('lon') }}", true);
+            xhttp.send();
+      }
+
+      // Loop through the results array and place a marker for each
+      // set of coordinates.
+      window.eqfeed_callback = function(results) {
+        for (var i = 0; i < results.features.length; i++) {
+          var coords = results.features[i].geometry.coordinates;
+          var latLng = new google.maps.LatLng(coords[1],coords[0]);
+          var marker = new google.maps.Marker({
+            position: latLng,
+            map: map
+          });
+        }
+      }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB52Yu60L0QBR2ONm3v1BKSnCg5MbNRr0w&libraries=visualization&callback=initMap">
+    </script>
+  </body>
+</html>

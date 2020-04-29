@@ -86,6 +86,7 @@
             {% include 'healthCentre.html' %}
         {% elif session.roleID == 3 %}
         <button type="button" class="btn btn-primary col-12" onclick="window.location.href = '/vaccineCountByState'">STATEWISE VACCINE COUNT</button>
+        <button type="button" class="btn btn-primary col-12" onclick="window.location.href = '/vaccineIDInfo'">INFO ON VACCINE ID</button>
         {% endif %}
         <button type="button" class="btn btn-danger col-12" onclick="window.location.href = '/deleteAccount'">DELETE ACCOUNT</button>
     {% endif %}

@@ -420,18 +420,33 @@ def vaccineCountByState():
         output.append(temp)
     return output
 
+@app.route('/vaccineIDInfo', methods=["POST", "GET"])
+def vaccineIDInfoGUI():
+    if (request.method == 'POST'):
+        vaccineID = request.form['vaccineid']
+        cur=mysql.connection.cursor()
+        args = (int(vaccineID), )
+        cur.callproc('getInfoOnVaccineID', args)
+        records = cur.fetchall()
+        #print(result)
+        #cur.close()
+        header_list=[i[0] for i in cur.description]
+        cur.close()
+        return jsonify({'data': render_template('result.html', object_list=records, header_list=header_list, title="Vaccine Info for Specific ID")})
+    else:
+        return render_template('vaccineCount.html', title="Vaccine Info for Specific ID")
+
 @app.route('/vaccineCountByState', methods=["POST", "GET"])
 def vaccineCountByStateGUI():
     if (request.method == 'POST'):
-        result = vaccineCountByState()
         cur=mysql.connection.cursor()
         cur.callproc('vaccineCountByState', args=())
         records = cur.fetchall()
         header_list=[i[0] for i in cur.description]
         cur.close()
-        returnjsonify({'data': render_template('result.html', object_list=records, header_list=header_list)})
+        return jsonify({'data': render_template('result.html', object_list=records, header_list=header_list, title="Vaccine County By State", option=1)})
     else:
-        return render_template('vaccineCount.html')
+        return render_template('vaccineCount.html', title="Vaccine County By State", option=1)
 
 @app.route('/api/vaccineCountByState')
 def vaccineCountByStateAPI():

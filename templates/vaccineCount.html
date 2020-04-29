@@ -37,13 +37,15 @@
         </section>
     {% endif %}
 
-<div class="container">
-    <h1 class="title text-center">Vaccine Statewise Count:</h1>
+<div class="container pb-5">
+    <h1 class="title text-center">{{ title }}</h1>
     <div class="row">
         <div class="col-12 text-center">
-        <form action="/vaccineCountByState" method="post" id="vaccine_count_form">
-            <button type="submit" class="btn btn-primary col-10">GET INFO</button>
-        </form>
+        {% if option == 1 %}
+            {% include 'vaccineCountForm.html' %}
+        {% else %}
+            {% include 'vaccineIdInfoForm.html' %}
+        {% endif %}
         </div>
         <div class="col-12" id="vaccine_count_form_result">
         </div>

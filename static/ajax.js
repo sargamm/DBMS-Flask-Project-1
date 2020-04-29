@@ -9,8 +9,8 @@ function submitAjaxRequest(form_id) {
             type: request_method,
             data : form_data
         }).done(function(response){ //
-            console.log("#" + form_id +"_result")
-            console.log(response)
+            //console.log("#" + form_id +"_result")
+            //console.log(response)
             document.getElementById(form_id +"_result").innerHTML = response.data
         });
     });

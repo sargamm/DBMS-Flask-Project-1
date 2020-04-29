@@ -1,0 +1,33 @@
+{% if session.loggedIn %}
+<div class="fluid-container p-5">
+    <form action="/changeNameAndContact" method="post" class="mb-3">
+        <div class="form-row">  
+            <div class="form-group col-12">
+                <label for="inputEmail">Name</label>
+                <input type="text" name="name" value="{{ session.userName }}" required="required" class="form-control" id="name" aria-describedby="username" placeholder="Enter name">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12">
+                <label for="inputContact">Contact Number</label>
+                <input type="text" name="contact" required="required" size="10" minlength="10" maxlength="10" class="form-control" id="contact" aria-describedby="emailHelp" placeholder="Enter contact">
+                <small id="contactHelp" class="form-text text-muted">We'll never share your contact with anyone else.</small>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-info col-12">Update Name and Contact</button>
+    </form>
+    <form action="/changePassword" method="post">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="inputpassword">Password</label>
+                <input type="password" name="password" required="required" minlength="6" class="form-control" id="password" aria-describedby="password" placeholder="Enter password">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="confirmpassword">Confirm Password</label>
+                <input type="password" name="c_password" required="required" class="form-control" id="confirm-password" aria-describedby="password" placeholder="Confirm password">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-info col-12">Change Password</button>
+    </form>
+</div>
+{% endif %}

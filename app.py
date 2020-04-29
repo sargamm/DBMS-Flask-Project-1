@@ -508,7 +508,50 @@ def covidTimeMap():
     else:
         return render_template('nationalTimeLine.html')
     
+@app.route('/changePassword', methods=['POST'])
+def changePassword():
+    if (request.method == 'POST'):
+        password = request.form['password']
+        c_password = request.form['c_password']
+        if (len(password) < 6):
+            return render_template('index.html', errors=["Password too weak"])
+        if (password == c_password):
+            cur = mysql.connection.cursor()
+            try:
+                query = "UPDATE AuthUsers set password=%s WHERE userID=%s"
+                cur.execute(str(query), [password, session.get("userId")])
+                mysql.connection.commit()
+                cur.close()
+                return render_template('index.html', errors=["Password changed successfully!"])
+            except:
+                mysql.connection.rollback()
+                cur.close()
+                return render_template('index.html', errors=["Some error has occured!"])
+        else:
+            return render_template('index.html', errors=["Passwords don't match"])
+    else:
+        return redirect('/login')
 
+@app.route('/changeNameAndContact')
+def changeNameAndContact():
+    if (request.method == 'POST'):
+        name = request.form['name']
+        contact = request.form['contact']
+        if (len(contact) < 10):
+            return render_template('index.html', errors=["Contact too short"])
+        cur = mysql.connection.cursor()
+        try:
+            query = "UPDATE AuthUsers set name=%s, contact=%s WHERE userID=%s"
+            cur.execute(str(query), [name, contact, session.get("userId")])
+            mysql.connection.commit()
+            cur.close()
+            return render_template('index.html', errors=["Name and contact updated!"])
+        except:
+            mysql.connection.rollback()
+            cur.close()
+            return render_template('index.html', errors=["Some error has occured!"])
+    else:
+        return redirect('/login')
 
 '''
     FOR THE IN QUERY!

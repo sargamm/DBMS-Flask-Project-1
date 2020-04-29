@@ -85,9 +85,12 @@
         {% if session.roleID == 1 %}
             {% include 'healthCentre.html' %}
         {% elif session.roleID == 3 %}
-        <button type="button" class="btn btn-primary col-12" onclick="window.location.href = '/vaccineCountByState'">STATEWISE VACCINE COUNT</button>
-        <button type="button" class="btn btn-primary col-12" onclick="window.location.href = '/vaccineIDInfo'">INFO ON VACCINE ID</button>
+        <button type="button" class="btn btn-primary col-12 m-2" onclick="window.location.href = '/vaccineCountByState'">STATEWISE VACCINE COUNT</button>
+        <button type="button" class="btn btn-primary col-12 m-2" onclick="window.location.href = '/vaccineIDInfo'">INFO ON VACCINE ID</button>
         {% endif %}
-        <button type="button" class="btn btn-danger col-12" onclick="window.location.href = '/deleteAccount'">DELETE ACCOUNT</button>
+        <div class="container">
+            {% include 'changeAuthUserSettings.html' %}
+        </div>
+        <button type="button" class="btn btn-danger col-12 mb-3" onclick="window.location.href = '/deleteAccount'">DELETE ACCOUNT</button>
     {% endif %}
 {% endblock %}

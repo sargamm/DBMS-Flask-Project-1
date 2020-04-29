@@ -64,7 +64,7 @@
     <h1 class="title">SERVICES</h1>
     <div class="row">
     <div class="col-md-4 services">
-    <img src="{{url_for('static', filename='vaccinerecordicon.png')}}" class="service-img" >
+    <img src="{{url_for('static', filename='vaccinerecordicon.png')}}" class="service-img" onclick="window.location.href = '#history'">
     <h4 class="icon-heading" href="#history">Check Vaccination Record</h4>
     </div>
       {% if session.loggedIn and (session.roleID == 2 or session.roleID == 1) %}
@@ -73,7 +73,7 @@
     <h4 class="icon-heading" href="/addRecord">Add Vaccination Record</h4>
     </div>
     <div class="col-md-4 services">
-      <img src="{{url_for('static', filename='availability.jpeg')}}" class="service-img" onclick="window.open('/Availability')">
+      <img src="{{url_for('static', filename='availability.jpeg')}}" class="service-img" onclick="window.location.href = '#availability'">
       <h4 class="icon-heading">Check availability</h4>
     </div>
     {% endif %}
@@ -91,15 +91,15 @@
     </div>
      {% endif %}
     <div class="col-md-4 services">
-    <img src="{{url_for('static', filename='healthfacility.png')}}" class="service-img">
+    <img src="{{url_for('static', filename='healthfacility.png')}}" class="service-img" onclick="window.location.href = '#nearbyfacility'">
     <h4 class="icon-heading">Nearby Vaccine Facility</h4>
     </div>
     <div class="col-md-4 services">
-      <img src="{{url_for('static', filename='countrywiseicon.png')}}" class="service-img" onclick="window.open('#country')">
+      <img src="{{url_for('static', filename='countrywiseicon.png')}}" class="service-img" onclick="window.location.href = '#country'">
       <h4 class="icon-heading">COUNTRY WISE Requirements</h4>
     </div>
     <div class="col-md-4 services">
-      <img src="{{url_for('static', filename='info.png')}}" class="service-img" onclick="window.open('/moreInfo')">
+      <img src="{{url_for('static', filename='info.png')}}" class="service-img" onclick="window.location.href = '/moreInfo'">
       <h4 class="icon-heading">Know more about diseases and vaccines</h4>
     </div>
     </div>
@@ -124,8 +124,6 @@
       {% include 'addStock.html' %}
     </section>
     {% endif %}
-    
-
     <section class="pt-5" id="covid">
       <div class="fluid-container text-center">
         <h1 class="title">COVID DATA INDIA</h1>

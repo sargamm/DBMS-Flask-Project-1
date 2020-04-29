@@ -189,8 +189,9 @@ def healthCentreUpdate():
 def MedPractitionerRegister():
     if request.method == 'POST':
         if (session.get("loggedIn") != None):
-            return render_template('RegisterMedPractitioner.html')
+            return redirect("/login")
         else:
+            print("HERE!")
             errors = []
             name = request.form.get('name')
             contact = request.form.get('contact')
@@ -205,15 +206,20 @@ def MedPractitionerRegister():
             if (len(errors) == 0):
                 cur = mysql.connection.cursor()
                 try:
+                    print("HERE!!!!")
                     cur.execute("INSERT INTO AuthUsers(password, emailID, contact, roleID, name) VALUES (%s, %s, %s, %s, %s)", [password, email, contact, 2, name])
                     AuthuserId = cur.lastrowid
                     cur.execute("INSERT INTO RegisteredPractitioners(userID, LicenseNumber,name,practicingSince, healthCentreID) Values (%s,%s,%s,%s,%s)", [AuthuserId,licenseNo,name,PracticingSince,HealthCentreID])
-                    userID=cur.lastrowid
-                    cur.execute("INSERT INTO HealthCentreAuthMap(AuthID,DoctorID) VALUES (%s,%s)",[AuthuserId,userID])        
+                    userID=licenseNo
+                    print("User ID:", userID)
+                    cur.execute("INSERT INTO DoctorAuthMap(AuthID,DoctorID) VALUES (%s,%s)",[AuthuserId,userID])        
                     mysql.connection.commit()
                     cur.close()
+                    print("DONE!")
                     return redirect(url_for('login'))
                 except Exception as e:
+                    mysql.connection.rollback()
+                    cur.close()
                     return render_template('RegisterMedPractitioner.html', errors=["VacciCure Error: Check your input again!"])
             else:
                 return render_template('RegisterMedPractitioner.html', errors=errors)
@@ -244,7 +250,7 @@ def GovtOfficialRegister():
                 errors.append("Pincode too short")
             if (len(errors) == 0):
                 cur = mysql.connection.cursor()
-                cur.execute("INSERT INTO AuthUsers(password, emailID, roleID, name) VALUES(%s, %s, %s, %s)", [password, email, 1, name])
+                cur.execute("INSERT INTO AuthUsers(password, emailID, roleID, name) VALUES(%s, %s, %s, %s)", [password, email, 3, name])
                 mysql.connection.commit()
                 cur.close()
                 return redirect(url_for('login'))
@@ -288,7 +294,7 @@ def addRecord():
             cur.close()
         return render_template('insertVaccineRecord.html')
     else:
-        return render_template('insertVaccineRecord.html', errors="POST REQUEST ONLY! SWIPER NO SWIPING!")
+        return render_template('insertVaccineRecord.html')
 
 @app.route('/generalQuery', methods=['POST'])
 def generalQuery():
@@ -400,6 +406,52 @@ def RegisterUser():
     else:
         return render_template('RegisterUser.html')
 
+def vaccineCountByState():
+    cur=mysql.connection.cursor()
+    cur.callproc('vaccineCountByState', args=())
+    result = cur.fetchall()
+    #print(result)
+    cur.close()
+    output = []
+    for r in result:
+        temp = {}
+        temp['state'] = r[0]
+        temp['count'] = r[1]
+        output.append(temp)
+    return output
+
+@app.route('/vaccineIDInfo', methods=["POST", "GET"])
+def vaccineIDInfoGUI():
+    if (request.method == 'POST'):
+        vaccineID = request.form['vaccineid']
+        cur=mysql.connection.cursor()
+        args = (int(vaccineID), )
+        cur.callproc('getInfoOnVaccineID', args)
+        records = cur.fetchall()
+        #print(result)
+        #cur.close()
+        header_list=[i[0] for i in cur.description]
+        cur.close()
+        return jsonify({'data': render_template('result.html', object_list=records, header_list=header_list, title="Vaccine Info for Specific ID")})
+    else:
+        return render_template('vaccineCount.html', title="Vaccine Info for Specific ID")
+
+@app.route('/vaccineCountByState', methods=["POST", "GET"])
+def vaccineCountByStateGUI():
+    if (request.method == 'POST'):
+        cur=mysql.connection.cursor()
+        cur.callproc('vaccineCountByState', args=())
+        records = cur.fetchall()
+        header_list=[i[0] for i in cur.description]
+        cur.close()
+        return jsonify({'data': render_template('result.html', object_list=records, header_list=header_list, title="Vaccine County By State", option=1)})
+    else:
+        return render_template('vaccineCount.html', title="Vaccine County By State", option=1)
+
+@app.route('/api/vaccineCountByState')
+def vaccineCountByStateAPI():
+    return jsonify({'data': vaccineCountByState()})
+
 @app.route('/moreInfo',methods=['GET','POST'])
 def moreInfo():
     if(request.method=='POST'):
@@ -456,7 +508,50 @@ def covidTimeMap():
     else:
         return render_template('nationalTimeLine.html')
     
+@app.route('/changePassword', methods=['POST'])
+def changePassword():
+    if (request.method == 'POST'):
+        password = request.form['password']
+        c_password = request.form['c_password']
+        if (len(password) < 6):
+            return render_template('index.html', errors=["Password too weak"])
+        if (password == c_password):
+            cur = mysql.connection.cursor()
+            try:
+                query = "UPDATE AuthUsers set password=%s WHERE userID=%s"
+                cur.execute(str(query), [password, session.get("userId")])
+                mysql.connection.commit()
+                cur.close()
+                return render_template('index.html', errors=["Password changed successfully!"])
+            except:
+                mysql.connection.rollback()
+                cur.close()
+                return render_template('index.html', errors=["Some error has occured!"])
+        else:
+            return render_template('index.html', errors=["Passwords don't match"])
+    else:
+        return redirect('/login')
 
+@app.route('/changeNameAndContact')
+def changeNameAndContact():
+    if (request.method == 'POST'):
+        name = request.form['name']
+        contact = request.form['contact']
+        if (len(contact) < 10):
+            return render_template('index.html', errors=["Contact too short"])
+        cur = mysql.connection.cursor()
+        try:
+            query = "UPDATE AuthUsers set name=%s, contact=%s WHERE userID=%s"
+            cur.execute(str(query), [name, contact, session.get("userId")])
+            mysql.connection.commit()
+            cur.close()
+            return render_template('index.html', errors=["Name and contact updated!"])
+        except:
+            mysql.connection.rollback()
+            cur.close()
+            return render_template('index.html', errors=["Some error has occured!"])
+    else:
+        return redirect('/login')
 
 '''
     FOR THE IN QUERY!

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    {% if not session.loggedIn %}
+        <div class="jumbotron">
+            <div class="container">
+                <h1 class="display-4">Vaccination Curation System</h1>
+                <p class="lead">We are trying to digitze the vaccination records of people to lead to a safer and secure future.</p>
+                <hr class="my-4">
+                <button type="button" class="btn btn-dark col-12"><a class="nav-link text-white" href="/" >GO BACK HOME</a></button>
+            </div>
+        </div>
+    {% else %}
+        <section id="nav-bar">
+            <nav class="navbar navbar-expand-lg navbar-light ">
+                <a class="navbar-brand" href="#main">VacciCure</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                    <a class="nav-link" href="/">HOME</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link" href="/">SERVICES</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link" href="/">ABOUT US</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">{{ session.userName }}</a>
+                    </li>
+                </ul>
+                </div>
+            </nav>
+        </section>
+    {% endif %}
+
+<div class="container pb-5">
+    <h1 class="title text-center">{{ title }}</h1>
+    <div class="row">
+        <div class="col-12 text-center">
+        {% if option == 1 %}
+            {% include 'vaccineCountForm.html' %}
+        {% else %}
+            {% include 'vaccineIdInfoForm.html' %}
+        {% endif %}
+        </div>
+        <div class="col-12" id="vaccine_count_form_result">
+        </div>
+    </div>
+</div>
+<script src="{{url_for('static', filename='ajax.js')}}" ></script>
+<script>
+    submitAjaxRequest('vaccine_count_form')
+</script>
+{% endblock %}
